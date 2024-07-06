@@ -5,7 +5,7 @@ PROJECT_NAME=instance_manager
 
 setup_env:
 	pip3 install virtualenv
-	virtualenv $(PROJECT_NAME)
+	virtualenv .venv
 
 deps:
 	pip3 install -r requirements.txt
