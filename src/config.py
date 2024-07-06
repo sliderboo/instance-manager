@@ -8,7 +8,7 @@ config = {
     # "DATABASE_URL": os.getenv("DATABASE_URL", "sqlite:///./dev.db"),
     "DATABASE_URL": os.getenv(
         "DATABASE_URL",
-        "postgresql+psycopg2://dev_user:secret@localhost:5432/dev_demo_devops",
+        "postgresql+psycopg2://dev_user:dev_password@localhost:5432/dev_db",
     ),
     "REDIS_HOST": os.getenv("REDIS_HOST", "localhost"),
     "REDIS_PORT": os.getenv("REDIS_PORT", 6379),
