@@ -12,13 +12,13 @@ deps:
 	pip3 install -r requirements-dev.txt
 
 up:
-	docker compose --profiles development up -d --build
+	docker compose --profile development up -d --build
 
 down:
-	docker compose --profiles development down
+	docker compose --profile development down
 
 log:
-	docker compose --profiles development logs
+	docker compose --profile development logs
 
 db:
 	docker run -p5432:5432 --name=dev_$(PROJECT_NAME)_db -d -e POSTGRES_USER=dev_user -e POSTGRES_PASSWORD=secret -e POSTGRES_DATABASE=dev_$(PROJECT_NAME) postgres:13
