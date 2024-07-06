@@ -1,8 +1,13 @@
-.PHONY: setup_env up down log db clean_db test
+.PHONY: setup_env up down log db clean_db test deps
+
+PROJECT_NAME=instance_manager
+
+
 setup_env:
 	pip3 install virtualenv
-	virtualenv hostpital_management_backend
-	source hostpital_management_backend/bin/activate
+	virtualenv $(PROJECT_NAME)
+
+deps:
 	pip3 install -r requirements.txt
 	pip3 install -r requirements-dev.txt
 
@@ -16,10 +21,10 @@ log:
 	docker compose logs
 
 db:
-	docker run -p5432:5432 --name=dev_hospital_management_db -d -e POSTGRES_USER=dev_user -e POSTGRES_PASSWORD=secret -e POSTGRES_DATABASE=dev_hospital_management postgres:13
+	docker run -p5432:5432 --name=dev_$(PROJECT_NAME)_db -d -e POSTGRES_USER=dev_user -e POSTGRES_PASSWORD=secret -e POSTGRES_DATABASE=dev_$(PROJECT_NAME) postgres:13
 
 clean_db:
-	docker stop dev_hospital_management_db
-	docker rm dev_hospital_management_db
+	docker stop dev_$(PROJECT_NAME)_db
+	docker rm dev_$(PROJECT_NAME)_db
 test:
 	cd ./src && PYTHONPATH=./ pytest  --disable-warnings
