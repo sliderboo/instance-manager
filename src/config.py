@@ -16,4 +16,7 @@ config = {
     "JWT_EXPIRATION": os.getenv("JWT_EXPIRATION", 3600 * 24),
     "PASSWORD_SALT": os.getenv("PASSWORD_SALT", "salt"),
     "ALLOWED_ORIGINS": ["*"],
+    "CHALLENGES": {
+        "DEFAULT_SOURCE_PATH": "/tmp",
+    },
 }
