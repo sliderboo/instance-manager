@@ -1,4 +1,6 @@
 from repository import RedisStorage
+from repository.user import UserRepository
+from models.user import QueryUserModel
 from fastapi import Depends, HTTPException, Cookie
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from typing import Optional, Tuple, Annotated, Union
@@ -15,7 +17,11 @@ from config import config
 class PasswordHandler:
     @staticmethod
     def hash(password: str) -> str:
-        return urlsafe_b64encode(pbkdf2_hmac("sha256", password.encode(), config["PASSWORD_SALT"].encode(), 100000)).decode()
+        return urlsafe_b64encode(
+            pbkdf2_hmac(
+                "sha256", password.encode(), config["PASSWORD_SALT"].encode(), 100000
+            )
+        ).decode()
 
     @staticmethod
     def verify(password: str, hashed: str) -> bool:
@@ -25,11 +31,11 @@ class PasswordHandler:
 class Base64:
     @staticmethod
     def encode(data: str) -> str:
-        return urlsafe_b64encode(data.encode()).decode().rstrip('=')
+        return urlsafe_b64encode(data.encode()).decode().rstrip("=")
 
     @staticmethod
     def decode(data: str) -> str:
-        enc = data + '=' * (-len(data) % 4)
+        enc = data + "=" * (-len(data) % 4)
         return urlsafe_b64decode(enc.encode()).decode()
 
 
@@ -59,11 +65,13 @@ class JWTHandler:
             uid = payload.get("uid", None)
             assert uid is not None
             self._store.set(uid, secret, ex=config["JWT_EXPIRATION"])
-            return ".".join([
-                Base64.encode(dumps({"alg": "HS256", "typ": "JWT"})),
-                Base64.encode(dumps(payload)),
-                self.sign(payload, secret)
-            ])
+            return ".".join(
+                [
+                    Base64.encode(dumps({"alg": "HS256", "typ": "JWT"})),
+                    Base64.encode(dumps(payload)),
+                    self.sign(payload, secret),
+                ]
+            )
         except Exception as e:
             return str(e)
 
@@ -76,15 +84,16 @@ class JWTHandler:
         return Base64.encode(new(secret.encode(), payload.encode(), sha256).hexdigest())
 
 
-def get_cookie_token(token: Annotated[Union[None, str], Cookie(alias="auth")] = None) -> Optional[str]:
+def get_cookie_token(
+    token: Annotated[Union[None, str], Cookie(alias="auth")] = None
+) -> Optional[str]:
     return token
 
 
 def auth(
-    token: HTTPAuthorizationCredentials = Depends(
-        HTTPBearer(auto_error=False)
-    ),
+    token: HTTPAuthorizationCredentials = Depends(HTTPBearer(auto_error=False)),
     jwt_handler: JWTHandler = Depends(JWTHandler),
+    user_repo: UserRepository = Depends(UserRepository),
     cookie_token: str = Depends(get_cookie_token),
 ):
     if not token:
@@ -96,9 +105,10 @@ def auth(
     try:
         payload, error = jwt_handler.verify(cred)
         assert error is None, str(error)
-        return payload
-    except Exception as e:
-        raise HTTPException(
-            status_code=403,
-            detail=str(e)
+        exist_user = user_repo.find_one(
+            query=QueryUserModel(id=payload.get("uid", None))
         )
+        assert exist_user is not None, "User not found"
+        return exist_user
+    except Exception as e:
+        raise HTTPException(status_code=403, detail=str(e))

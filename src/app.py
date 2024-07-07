@@ -26,15 +26,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+configs = {
+    "host": config["HOST"],
+    "port": config["PORT"],
+    "reload": not config["PROD"],
+    "workers": config["workers"] if config["PROD"] else 1,
+}
+Base.metadata.create_all(bind=create_engine(config["DATABASE_URL"]))
 
 if __name__ == "__main__":
-    configs = {
-        "host": config["HOST"],
-        "port": config["PORT"],
-        "reload": not config["PROD"],
-        "workers": config["workers"] if config["PROD"] else 1,
-    }
-    Base.metadata.create_all(bind=create_engine(config["DATABASE_URL"]))
     uvicorn.run("app:app", **configs)
 
 __all__ = ["app"]
