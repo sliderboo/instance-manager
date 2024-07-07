@@ -2,8 +2,7 @@ import os
 import uvicorn
 from fastapi import FastAPI
 from config import config
-from repository.schema import Base
-from repository.schema.user import User  # noqa
+from repository.schema import *
 from sqlalchemy import create_engine
 from fastapi.middleware.cors import CORSMiddleware
 

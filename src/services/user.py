@@ -5,7 +5,7 @@ from repository.user import UserRepository
 from models.dto.user import UserResponse
 from models.user import QueryUserModel
 
-from utils.crypto import auth
+from utils.gate_keeper import auth
 
 from uuid import UUID
 
@@ -27,9 +27,10 @@ class UserService:
             user = self._repo.find_one(query=query)
             assert user is not None, "Please login first!"
             return UserResponse(
-                id=user.id, slug=user.slug, email=user.email, display_name=user.display_name
+                id=user.id,
+                slug=user.slug,
+                email=user.email,
+                display_name=user.display_name,
             )
         except Exception as e:
-            raise HTTPException(
-                status_code=204, detail=str(e)
-            )
+            raise HTTPException(status_code=204, detail=str(e))

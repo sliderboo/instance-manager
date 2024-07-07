@@ -1,10 +1,10 @@
 from fastapi import APIRouter, status, Depends
 
 from models.dto.user import UserResponseModel, UserResponse
-from repository.schema.user import User
+from repository.schema import User
 
 from utils.api import APIResponse
-from utils.crypto import auth
+from utils.gate_keeper import auth
 
 router = APIRouter()
 

@@ -6,7 +6,7 @@ from services.auth import AuthService
 from models.dto.user import AuthResponseModel, UserRequest, NewUserResponseModel, NewUserRequest
 from models.dto.response import ResponseModel
 
-from utils.crypto import auth
+from utils.gate_keeper import auth
 
 router = APIRouter()
 

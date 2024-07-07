@@ -3,7 +3,7 @@ from repository.user import UserRepository
 from models.dto.user import NewUserRequest, UserResponse, UserRequest
 from models.user import QueryUserModel, UserModel
 
-from utils.crypto import JWTHandler, PasswordHandler
+from utils.gate_keeper import JWTHandler, PasswordHandler
 from fastapi import Depends, HTTPException
 from uuid import uuid4
 from string import ascii_letters, digits

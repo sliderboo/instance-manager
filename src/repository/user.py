@@ -1,6 +1,6 @@
 from fastapi import Depends
 from repository import Storage
-from repository.schema.user import User
+from repository.schema import User
 from typing import Optional
 from models.user import UserModel, QueryUserModel
 from sqlalchemy.orm import Session
@@ -17,7 +17,7 @@ class UserRepository:
             self._session.commit()
             self._session.refresh(user)
             return user
-        except:
+        except Exception as e:
             self._session.rollback()
             return None
 
@@ -32,6 +32,10 @@ class UserRepository:
 
     def find_one(self, query: QueryUserModel) -> Optional[User]:
         try:
-            return self._session.query(User).filter_by(**query.model_dump(exclude_none=True)).first()
+            return (
+                self._session.query(User)
+                .filter_by(**query.model_dump(exclude_none=True))
+                .first()
+            )
         except:
             return None

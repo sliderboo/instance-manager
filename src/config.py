@@ -19,4 +19,11 @@ config = {
     "CHALLENGES": {
         "DEFAULT_SOURCE_PATH": "/tmp",
     },
+    "DOCKER": {
+        "HOST": os.getenv("DOCKER_HOST", "unix:///var/run/docker.sock"),
+        "USERNAME": os.getenv("DOCKER_USERNAME", ""),
+        "PASSWORD": os.getenv("DOCKER_PASSWORD", ""),
+        "REGISTRY": os.getenv("DOCKER_REGISTRY", "https://index.docker.io/v1/"),
+    },
+    "DEBUG": os.getenv("DEBUG", False),
 }

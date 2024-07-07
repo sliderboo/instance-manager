@@ -1,0 +1,20 @@
+title: Test Challenge
+description: super hard
+category: pwn
+
+images:
+    - name: image1
+      tag: latest
+      ports:
+          - 3000
+          - 2999
+      cap_add:
+          - SYS_PTRACE
+    - name: image2
+      tag: latest
+      privileged: true
+      ports:
+          - 8000
+      environment:
+          key1: value1
+          key2: value2
