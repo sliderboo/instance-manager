@@ -1,5 +1,6 @@
 from repository import RedisStorage
 from repository.user import UserRepository
+from repository.schema import User
 from models.user import QueryUserModel
 from fastapi import Depends, HTTPException, Cookie
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -103,6 +104,8 @@ def auth(
     if not cred:
         raise Exception("No token provided")
     try:
+        if cred == config["BOT_TOKEN"]:
+            return User(id="bot", email="bot@game")
         payload, error = jwt_handler.verify(cred)
         assert error is None, str(error)
         exist_user = user_repo.find_one(

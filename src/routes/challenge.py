@@ -26,18 +26,18 @@ def create_challenge(
     )
 
 
-# @router.post("/request")
-# def request_spawn_instance(
-#     instance: InstanceRequest,
-#     service: ChallengeService = Depends(ChallengeService),
-# ):
-#     instance = service.request_instance(instance.challenge_id)
-#     return APIResponse.as_json(
-#         code=status.HTTP_201_CREATED,
-#         status="Instance created successfully",
-#         data={
-#             "id": instance.id,
-#             "image": instance.image.name,
-#             "status": instance.status,
-#         },
-#     )
+@router.post("/request")
+def request_spawn_instance(
+    instance: InstanceRequest,
+    service: ChallengeService = Depends(ChallengeService),
+):
+    instance = service.request_instance(instance.challenge_id)
+    return APIResponse.as_json(
+        code=status.HTTP_201_CREATED,
+        status="Instance created successfully",
+        data={
+            "id": instance.id,
+            "image": instance.image.name,
+            "status": instance.status,
+        },
+    )

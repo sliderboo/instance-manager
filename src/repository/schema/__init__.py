@@ -11,13 +11,11 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(String, primary_key=True, index=True)
-    slug = Column(String, unique=True, index=True)
-    email = Column(String, unique=True, index=True)
-    password = Column(String)
-    display_name = Column(String)
-
-    can_author = Column(Boolean, default=False)
+    id = mapped_column(String, primary_key=True, index=True)
+    slug = mapped_column(String, unique=True, index=True)
+    email = mapped_column(String, unique=True, index=True)
+    password = mapped_column(String)
+    display_name = mapped_column(String)
 
     joined_instances: Mapped[List["Instance"]] = relationship(
         "Instance", secondary="joins", back_populates="players"
@@ -25,10 +23,6 @@ class User(Base):
 
     spawned_instances: Mapped[List["Instance"]] = relationship(
         "Instance", back_populates="creator"
-    )
-
-    created_challenges: Mapped[List["Instance"]] = relationship(
-        "Challenge", back_populates="author"
     )
 
 
@@ -124,18 +118,19 @@ class Instance(Base):
     re_spawn = mapped_column(Integer, default=0)
     status = mapped_column(Enum(InstanceStatus), default=InstanceStatus.RUNNING)
 
+    ins_flag = mapped_column(String, nullable=False)
+
 
 class Challenge(Base):
     __tablename__ = "challenges"
 
     id = mapped_column(Integer, primary_key=True, index=True, autoincrement=True)
 
-    author_id = mapped_column(String, ForeignKey(User.id))
-    author = relationship("User", back_populates="created_challenges")
+    author = mapped_column(String)
     title = mapped_column(String)
     description = mapped_column(String)
     category = mapped_column(String)
 
     images: Mapped[List["Image"]] = relationship("Image", back_populates="challenge")
 
-    flag = mapped_column(String, default="flag{this_is_a_flag}")
+    real_flag = mapped_column(String)

@@ -26,4 +26,7 @@ config = {
         "REGISTRY": os.getenv("DOCKER_REGISTRY", "https://index.docker.io/v1/"),
     },
     "DEBUG": os.getenv("DEBUG", False),
+    "PUBLIC_KEY": os.getenv("PUBLIC_KEY", ""),
+    "PRIVATE_KEY": os.getenv("PRIVATE_KEY", ""),
+    "BOT_TOKEN": os.getenv("BOT_TOKEN", "i_am_bot"),
 }

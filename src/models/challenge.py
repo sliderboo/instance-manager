@@ -23,5 +23,8 @@ class ChallengeConfig(BaseModel):
     title: str
     description: str
     category: str
+    author: str
+
+    enc_flag: str
 
     images: List[ImageConfig]
