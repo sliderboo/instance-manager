@@ -23,4 +23,6 @@ class DockerHandler:
             return False
 
     def normalize_image(self, image_name: str):
-        return config["DOCKER"]["USERNAME"] + "/" + image_name
+        if config["DOCKER"]["REGISTRY"] and "/" not in image_name:
+            return config["DOCKER"]["REGISTRY"] + "/" + image_name
+        return image_name
