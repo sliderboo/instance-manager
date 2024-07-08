@@ -27,7 +27,7 @@ class ChallengeService:
     def create(self, challenge: NewChallengeRequest):
         assert self._user.id == "bot", "User is not authorized to create challenges"
         ops_handler = ChallOpsHandler(challenge.config)
-        return self._repo.create(ops_handler.challenge, ops_handler.flag)
+        return self._repo.create(ops_handler.config, ops_handler.flag)
 
     def request_instance(self, chall_id):
         exist_instance = self._db.query(Instance).filter()

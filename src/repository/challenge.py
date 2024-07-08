@@ -1,7 +1,6 @@
 from repository import Storage
 from sqlalchemy.orm import Session
 from fastapi import Depends
-from models.challenge import ChallengeConfig
 from repository.schema import (
     Challenge,
     Image,
@@ -9,6 +8,7 @@ from repository.schema import (
     ImageEnvironment,
     ImageCapAdd,
 )
+from models.challenge import ChallengeConfig
 
 
 class ChallengeRepository:
@@ -22,7 +22,7 @@ class ChallengeRepository:
                 description=challCfg.description,
                 category=challCfg.category,
                 author=challCfg.author,
-                flag=flag,
+                real_flag=flag,
             )
             chall = self.add_and_refresh(chall)
             for image in challCfg.images:
@@ -60,9 +60,9 @@ class ChallengeRepository:
                 self._session.commit()
             self._session.refresh(chall)
             return chall
-        except:
+        except Exception as e:
             self._session.rollback()
-            raise Exception("Failed to create challenge")
+            raise Exception(e)
 
     def add_array(self, array):
         if array:

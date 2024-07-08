@@ -31,11 +31,6 @@ class ChallOpsHandler:
 
     @property
     def flag(self):
-        return (
-            decrypt(
-                b64decode(self.cfg.enc_flag.encode()),
-                PrivateKey.load_pkcs1(config["PRIVATE_KEY"].encode()),
-            )
-            .strip()
-            .decode()
-        )
+        private_key = PrivateKey.load_pkcs1(config["PRIVATE_KEY"].encode())
+        cipher_text = b64decode(self.cfg.enc_flag.encode())
+        return decrypt(cipher_text, private_key).decode()

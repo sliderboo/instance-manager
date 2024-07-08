@@ -2,17 +2,17 @@ title: Test Challenge
 description: super hard
 category: pwn
 author: hah4
-flag: ZEEmk4vlBQFWFidlqn3+vZr1upyY1F0o1CyDfnkc98XK38nHC1EN+cY7OKmS1GeEyzGjg9TJ/t+T7hf5bejfKXtfgPwSLf2DEANDXZoLvTAa4y3ty6K94JSEEkAx8P3z9hUXd7hGAN2vdpmbegr5kVAMOs3gteHb6OJWGjNBR0s=
+enc_flag: G0wozEp9MMvXxC9ymRiDnpLztbyW//Q1+5FyxjJ78K4NH461gD2YwOkhQ3wfykqr3cBSdYadE5+SeZQp5yRFJKHPsVH0jKnH5JFb73LpRu7LBQHykRNv4x6sw6ym/k3uAqlUOnZmJQwkT5acHB2g9+KChVJ6VqyspX8603WWTCo=
 
 images:
-    - name: image1
+    - name: nginx
       tag: latest
       ports:
           - 3000
           - 2999
       cap_add:
           - SYS_PTRACE
-    - name: image2
+    - name: redis
       tag: latest
       privileged: true
       ports:
