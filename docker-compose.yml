@@ -1,59 +1,103 @@
 x-env-settings:
-  - &POSTGRES_USER ${POSTGRES_USER:-dev_user}
-  - &POSTGRES_PASSWORD ${POSTGRES_PASSWORD:-dev_password}
-  - &POSTGRES_DB ${POSTGRES_DB:-dev_db}
-  - &REDIS_USER ${REDIS_USER:-}
-  - &REDIS_PASSWORD ${REDIS_PASSWORD:-}  
+    - &POSTGRES_USER ${POSTGRES_USER:-dev_user}
+    - &POSTGRES_PASSWORD ${POSTGRES_PASSWORD:-dev_password}
+    - &POSTGRES_DB ${POSTGRES_DB:-dev_db}
+    - &REDIS_USER ${REDIS_USER:-}
+    - &REDIS_PASSWORD ${REDIS_PASSWORD:-}
 
 services:
-  postgres:
-    image: postgres:16.3-alpine3.20
-    restart: unless-stopped
-    profiles:
-      - deployment
-    environment:
-      POSTGRES_USER: *POSTGRES_USER
-      POSTGRES_PASSWORD: *POSTGRES_PASSWORD
-      POSTGRES_DB: *POSTGRES_DB
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+    postgres:
+        image: postgres:16.3-alpine3.20
+        restart: unless-stopped
+        profiles:
+            - prod
+        environment:
+            POSTGRES_USER: *POSTGRES_USER
+            POSTGRES_PASSWORD: *POSTGRES_PASSWORD
+            POSTGRES_DB: *POSTGRES_DB
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        ports:
+            - 5432:5432
 
-  postgres-dev:
-    image: postgres:16.3-alpine3.20
-    restart: unless-stopped
-    profiles:
-      - development
-    environment:
-      POSTGRES_USER: *POSTGRES_USER
-      POSTGRES_PASSWORD: *POSTGRES_PASSWORD
-      POSTGRES_DB: *POSTGRES_DB
-    ports:
-      - '5432:5432'
-  redis:
-    image: redis:7.2.5-alpine
-    restart: unless-stopped
-    profiles:
-      - deployment
-      - development
-    environment:
-      REDIS_USER: *REDIS_USER
-      REDIS_PASSWORD: *REDIS_PASSWORD
-    ports:
-      - '6379:6379'
+    postgres-dev:
+        image: postgres:16.3-alpine3.20
+        restart: unless-stopped
+        profiles:
+            - dev
+        environment:
+            POSTGRES_USER: *POSTGRES_USER
+            POSTGRES_PASSWORD: *POSTGRES_PASSWORD
+            POSTGRES_DB: *POSTGRES_DB
+        ports:
+            - "5432:5432"
+    redis:
+        image: redis:7.2.5-alpine
+        restart: unless-stopped
+        profiles:
+            - dev
+            - prod
+        environment:
+            REDIS_USER: *REDIS_USER
+            REDIS_PASSWORD: *REDIS_PASSWORD
+        ports:
+            - "6379:6379"
 
-  app:
-    container_name: instance-manager
-    restart: unless-stopped
-    build:
-      context: .
-      dockerfile: Dockerfile
-    profiles:
-      - deployment
-    depends_on:
-      - postgres
-      - redis
-    ports:
-      - "8000:8000"
+    app:
+        restart: unless-stopped
+        build: .
+        profiles:
+            - prod
+        depends_on:
+            - postgres
+            - redis
+            - worker
+            - flower
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - ./logs/fastapi:/var/log
+        environment:
+            - DATABASE_URL=postgresql://${POSTGRES_USER:-dev_user}:${POSTGRES_PASSWORD:-dev_password}@postgres:5432/${POSTGRES_DB:-dev_db}
+            - REDIS_HOST=redis
+            - REDIS_PORT=6379
+            - BOT_TOKEN=${BOT_TOKEN:-i_am_a_bot}
+            - DOCKER_USERNAME=${DOCKER_USERNAME:-}
+            - DOCKER_PASSWORD=${DOCKER_PASSWORD:-}
+        ports:
+            - "8000:8000"
+        command: fastapi run --host 0.0.0.0 --port 8000
+    worker:
+        restart: unless-stopped
+        build: .
+        profiles:
+            - prod
+        depends_on:
+            - postgres
+            - redis
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - ./logs/celery:/var/log
+        environment:
+            - DATABASE_URL=postgresql://${POSTGRES_USER:-dev_user}:${POSTGRES_PASSWORD:-dev_password}@postgres:5432/${POSTGRES_DB:-dev_db}
+            - REDIS_HOST=redis
+            - REDIS_PORT=6379
+            - BOT_TOKEN=${BOT_TOKEN:-i_am_a_bot}
+            - DOCKER_USERNAME=${DOCKER_USERNAME:-}
+            - DOCKER_PASSWORD=${DOCKER_PASSWORD:-}
+        command: celery -A worker.worker worker --loglevel=info --logfile=/var/log/celery.log
 
+    flower:
+        restart: unless-stopped
+        build: .
+        profiles:
+            - prod
+        depends_on:
+            - postgres
+            - redis
+        environment:
+            FLOWER_BASIC_AUTH: ${FLOWER_BASIC_AUTH:-admin:admin}
+        command: celery -A worker.worker --broker=${CELERY_BROKER_URL:-redis://redis:6379/1} flower --port=5555
+        ports:
+            - "5555:5555"
 volumes:
-  postgres_data:
+    postgres_data:

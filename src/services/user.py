@@ -33,4 +33,5 @@ class UserService:
                 display_name=user.display_name,
             )
         except Exception as e:
+            print("Error: ", e)
             raise HTTPException(status_code=204, detail=str(e))

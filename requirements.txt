@@ -1,4 +1,4 @@
-fastapi==0.109.0
+fastapi[standard]
 fastapi-sqlalchemy==0.2.1
 pydantic==2.5.3
 uvicorn==0.27.0
@@ -26,3 +26,13 @@ redis
 pyyaml
 docker
 rsa
+Jinja2
+bs4
+celery
+flower
+fastapi-cli
+apscheduler
+unidecode
+alembic
+sqladmin[full]
+itsdangerous

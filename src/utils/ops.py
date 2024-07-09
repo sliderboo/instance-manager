@@ -1,23 +1,24 @@
 from base64 import b64decode
-from yaml import safe_load
 from models.challenge import ChallengeConfig
 from .docker import DockerHandler
-from rsa import decrypt, PrivateKey
-from config import config
+from yaml import safe_load
 
 
 class ChallOpsHandler:
-    def __init__(self, enc_config: str):
+    def __init__(self, enc_config: str, creds: dict = None):
         self.raw_cfg = b64decode(enc_config.encode()).decode("utf-8")
         self.cfg = ChallengeConfig.model_validate(safe_load(self.raw_cfg))
-        self._docker = DockerHandler()
-        assert self.verify_images(), "Invalid image(s) provided"
+        self._docker = DockerHandler(creds)
 
     def verify_images(self):
-        for img in self.cfg.images:
-            if not self._docker.verify_image(f"{img.name}:{img.tag}"):
-                return False
-        return True
+        for ser in self.cfg.services:
+            if not self._docker.verify_image(ser.image):
+                raise Exception(f"Image {ser.image} not found")
+
+    def pull_images(self):
+        for ser in self.cfg.services:
+            if not self._docker.pull_image(ser.image):
+                raise Exception(f"Failed to pull image {ser.image}")
 
     @property
     def config(self):
@@ -30,7 +31,5 @@ class ChallOpsHandler:
         return tmp
 
     @property
-    def flag(self):
-        private_key = PrivateKey.load_pkcs1(config["PRIVATE_KEY"].encode())
-        cipher_text = b64decode(self.cfg.enc_flag.encode())
-        return decrypt(cipher_text, private_key).decode()
+    def images(self):
+        return [x.image for x in self.cfg.services]

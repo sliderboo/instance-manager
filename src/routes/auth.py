@@ -3,7 +3,12 @@ from utils.api import APIResponse
 
 from services.auth import AuthService
 
-from models.dto.user import AuthResponseModel, UserRequest, NewUserResponseModel, NewUserRequest
+from models.dto.user import (
+    AuthResponseModel,
+    UserRequest,
+    NewUserResponseModel,
+    NewUserRequest,
+)
 from models.dto.response import ResponseModel
 
 from utils.gate_keeper import auth
@@ -19,18 +24,10 @@ async def signin(
 ):
     access_token = service.signin(user)
     response = APIResponse.as_json(
-        code=status.HTTP_200_OK,
-        status="Login successful",
-        data={
-            "token": access_token
-        }
+        code=status.HTTP_200_OK, status="Login successful", data={"token": access_token}
     )
     response.set_cookie(
-        "auth",
-        access_token,
-        httponly=True,
-        samesite="strict",
-        path="/api"
+        "auth", access_token, httponly=True, samesite="strict", path="/"
     )
     return response
 
@@ -40,26 +37,22 @@ async def signup(
     user: NewUserRequest,
     service: AuthService = Depends(AuthService),
 ):
+    raise Exception("Not implemented")
     return APIResponse.as_json(
         code=status.HTTP_201_CREATED,
         status="User created",
-        data={
-            "user": (service.signup(user)).model_dump()
-        }
+        data={"user": (service.signup(user)).model_dump()},
     )
 
 
-@router.post("/logout", tags=["auth"], response_model=ResponseModel)
+@router.get("/logout", tags=["auth"], response_model=ResponseModel)
 async def logout(
     response: Response,
     service: AuthService = Depends(AuthService),
-    user: dict = Depends(auth)
+    user=Depends(auth),
 ):
-    uid = user.get("uid")
+    uid = user.id
     service.logout(uid)
-    response = APIResponse.as_json(
-        code=status.HTTP_200_OK,
-        status="Logout successful"
-    )
+    response = APIResponse.as_json(code=status.HTTP_200_OK, status="Logout successful")
     response.delete_cookie("auth")
     return response

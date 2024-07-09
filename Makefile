@@ -28,3 +28,9 @@ clean_db:
 	docker rm dev_$(PROJECT_NAME)_db
 test:
 	cd ./src && PYTHONPATH=./ pytest  --disable-warnings
+
+migrate-new:
+	cd ./src && alembic revision --autogenerate
+
+migrate:
+	cd ./src && alembic upgrade head

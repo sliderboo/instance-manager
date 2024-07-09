@@ -12,7 +12,7 @@ class UserRepository:
 
     def create(self, user: UserModel) -> Optional[User]:
         try:
-            user = User(**user.model_dump())
+            user = User(**user.model_dump(exclude_none=True))
             self._session.add(user)
             self._session.commit()
             self._session.refresh(user)

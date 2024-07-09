@@ -2,7 +2,7 @@ from repository import RedisStorage
 from repository.user import UserRepository
 from repository.schema import User
 from models.user import QueryUserModel
-from fastapi import Depends, HTTPException, Cookie
+from fastapi import Depends, HTTPException, Cookie, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from typing import Optional, Tuple, Annotated, Union
 from hashlib import sha256, pbkdf2_hmac
@@ -13,6 +13,9 @@ from string import ascii_letters, digits
 from random import choices
 from redis import Redis
 from config import config
+import logging
+
+log = logging.getLogger(__name__)
 
 
 class PasswordHandler:
@@ -36,6 +39,8 @@ class Base64:
 
     @staticmethod
     def decode(data: str) -> str:
+        if not data:
+            return ""
         enc = data + "=" * (-len(data) % 4)
         return urlsafe_b64decode(enc.encode()).decode()
 
@@ -49,13 +54,15 @@ class JWTHandler:
         try:
             payload = loads(Base64.decode(payload))
             uid = payload.get("uid", None)
-            assert uid is not None
+            if not uid:
+                raise Exception("Invalid payload")
             secret = self._store.get(uid)
             if not secret:
                 raise Exception("Invalid or expired token")
             if isinstance(secret, bytes):
                 secret = secret.decode()
-            assert signature == self.sign(payload, secret), "Invalid signature"
+            if signature != self.sign(payload, secret):
+                raise Exception("Invalid signature")
             return payload, None
         except Exception as e:
             return None, Exception(str(e))
@@ -64,7 +71,8 @@ class JWTHandler:
         try:
             secret = "".join(choices(ascii_letters + digits, k=64))
             uid = payload.get("uid", None)
-            assert uid is not None
+            if not uid:
+                raise Exception("Invalid payload")
             self._store.set(uid, secret, ex=config["JWT_EXPIRATION"])
             return ".".join(
                 [
@@ -74,7 +82,7 @@ class JWTHandler:
                 ]
             )
         except Exception as e:
-            return str(e)
+            return None
 
     def revoke(self, uid: str) -> None:
         self._store.delete(uid)
@@ -92,26 +100,40 @@ def get_cookie_token(
 
 
 def auth(
-    token: HTTPAuthorizationCredentials = Depends(HTTPBearer(auto_error=False)),
+    request: Request,
+    *,
+    strict: bool = False,
     jwt_handler: JWTHandler = Depends(JWTHandler),
     user_repo: UserRepository = Depends(UserRepository),
+    token: HTTPAuthorizationCredentials = Depends(HTTPBearer(auto_error=False)),
     cookie_token: str = Depends(get_cookie_token),
 ):
+    log.debug(f"{request.headers}")
+    cred = None
     if not token:
         cred = cookie_token
     else:
         cred = token.credentials
     if not cred:
-        raise Exception("No token provided")
+        if strict:
+            raise HTTPException(status_code=403, detail="Please login first")
+        return None
     try:
         if cred == config["BOT_TOKEN"]:
             return User(id="bot", email="bot@game")
-        payload, error = jwt_handler.verify(cred)
-        assert error is None, str(error)
+        payload, _ = jwt_handler.verify(cred)
+        if not payload:
+            return None
         exist_user = user_repo.find_one(
             query=QueryUserModel(id=payload.get("uid", None))
         )
-        assert exist_user is not None, "User not found"
+        if strict and not exist_user:
+            raise Exception("Please login first")
+        log.debug(
+            "request from user: {}".format(
+                exist_user.display_name if exist_user else "Guest"
+            )
+        )
         return exist_user
     except Exception as e:
         raise HTTPException(status_code=403, detail=str(e))

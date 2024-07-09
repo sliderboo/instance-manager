@@ -1,9 +1,19 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Mapped
-from sqlalchemy import Column, String, ForeignKey, Table, Integer, Enum, Boolean
+from sqlalchemy import (
+    Column,
+    String,
+    ForeignKey,
+    Table,
+    Integer,
+    Enum,
+    Boolean,
+    DateTime,
+)
 from sqlalchemy.orm import relationship, mapped_column
 from typing import List
-import enum
+import datetime
+from uuid import uuid4
 
 Base = declarative_base()
 
@@ -11,114 +21,37 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = "users"
 
-    id = mapped_column(String, primary_key=True, index=True)
-    slug = mapped_column(String, unique=True, index=True)
-    email = mapped_column(String, unique=True, index=True)
-    password = mapped_column(String)
-    display_name = mapped_column(String)
+    id = mapped_column(String, primary_key=True, index=True, default=uuid4)
+    email = mapped_column(String, unique=True)
+    display_name = mapped_column(String, unique=True, index=True)
+    is_admin = mapped_column(Boolean, default=False)
 
-    joined_instances: Mapped[List["Instance"]] = relationship(
-        "Instance", secondary="joins", back_populates="players"
-    )
-
-    spawned_instances: Mapped[List["Instance"]] = relationship(
-        "Instance", back_populates="creator"
+    joined_challanges: Mapped[List["Challenge"]] = relationship(
+        "Challenge", secondary="joins", back_populates="players"
     )
 
 
-class ImagePorts(Base):
-    __tablename__ = "image_ports"
+class Service(Base):
+    __tablename__ = "services"
 
     id = mapped_column(Integer, primary_key=True, index=True, autoincrement=True)
 
-    image_id = mapped_column(Integer, ForeignKey("images.id"))
-    image = relationship("Image", back_populates="ports", foreign_keys=[image_id])
-
-    value = mapped_column(String)
-
-
-class ImageEnvironment(Base):
-    __tablename__ = "image_environment"
-
-    id = mapped_column(Integer, primary_key=True, index=True, autoincrement=True)
-
-    image_id = mapped_column(Integer, ForeignKey("images.id"))
-    image = relationship("Image", back_populates="environment", foreign_keys=[image_id])
-
-    key = mapped_column(String)
-    value = mapped_column(String)
-
-
-class ImageCapAdd(Base):
-    __tablename__ = "image_cap_add"
-
-    id = mapped_column(Integer, primary_key=True, index=True, autoincrement=True)
-
-    image_id = mapped_column(Integer, ForeignKey("images.id"))
-    image = relationship("Image", back_populates="cap_add", foreign_keys=[image_id])
-
-    value = mapped_column(String)
-
-
-class Image(Base):
-    __tablename__ = "images"
-
-    id = mapped_column(Integer, primary_key=True, index=True, autoincrement=True)
-
-    name = mapped_column(String)
-    custom_host_name = mapped_column(String, nullable=True)
-    tag: Mapped[str] = mapped_column(String, default="latest")
+    image = mapped_column(String, nullable=False)
+    name = mapped_column(String, nullable=False)
 
     challenge_id = mapped_column(Integer, ForeignKey("challenges.id"))
-    challenge = relationship("Challenge", back_populates="images")
+    challenge = relationship("Challenge", back_populates="services")
 
     privileged = mapped_column(Boolean, default=False)
+    cpu = mapped_column(String, default="0.5")
+    memory = mapped_column(String, default="512M")
 
-    ports: Mapped["ImagePorts"] = relationship("ImagePorts", back_populates="image")
-    environment: Mapped["ImageEnvironment"] = relationship(
-        "ImageEnvironment", back_populates="image"
-    )
-    cap_add: Mapped[List["ImageCapAdd"]] = relationship(
-        "ImageCapAdd", back_populates="image"
-    )
+    ports = mapped_column(String, nullable=False)
+    environment = mapped_column(String, nullable=False)
+    cap_add = mapped_column(String, nullable=False)
 
-    instances: Mapped[List["Instance"]] = relationship(
-        "Instance", back_populates="image"
-    )
-
-
-joins = Table(
-    "joins",
-    Base.metadata,
-    Column("instance_id", Integer, ForeignKey("instances.id")),
-    Column("user_id", String, ForeignKey(User.id)),
-)
-
-
-class InstanceStatus(enum.Enum):
-    STOPPED = 0
-    RUNNING = 1
-    CRASHED = 2
-
-
-class Instance(Base):
-    __tablename__ = "instances"
-
-    id = mapped_column(Integer, primary_key=True, index=True, autoincrement=True)
-
-    image_id = mapped_column(Integer, ForeignKey("images.id"))
-    image = relationship("Image", back_populates="instances")
-
-    creator_id = mapped_column(String, ForeignKey(User.id))
-    creator = relationship("User", back_populates="spawned_instances")
-    created_at = mapped_column(String)
-
-    players = relationship("User", secondary="joins", back_populates="joined_instances")
-
-    re_spawn = mapped_column(Integer, default=0)
-    status = mapped_column(Enum(InstanceStatus), default=InstanceStatus.RUNNING)
-
-    ins_flag = mapped_column(String, nullable=False)
+    def __repr__(self):
+        return f"<Service {self.name} with image: {self.image}>"
 
 
 class Challenge(Base):
@@ -126,11 +59,31 @@ class Challenge(Base):
 
     id = mapped_column(Integer, primary_key=True, index=True, autoincrement=True)
 
-    author = mapped_column(String)
-    title = mapped_column(String)
-    description = mapped_column(String)
-    category = mapped_column(String)
+    title = mapped_column(String, unique=True, index=True)
 
-    images: Mapped[List["Image"]] = relationship("Image", back_populates="challenge")
+    services: Mapped[List["Service"]] = relationship(
+        "Service", back_populates="challenge"
+    )
 
-    real_flag = mapped_column(String)
+    players = relationship(
+        "User", secondary="joins", back_populates="joined_challanges"
+    )
+
+    status = mapped_column(Enum("running", "stop", name="status"), default="stop")
+
+    visible = mapped_column(Boolean, default=True)
+
+    connection_info = mapped_column(String, nullable=True)
+
+    def __repr__(self):
+        return f"<Challenge {self.title} with status: {'running' if self.connection_info else 'stopped'}>"
+
+
+joins = Table(
+    "joins",
+    Base.metadata,
+    Column("id", Integer, primary_key=True, index=True, autoincrement=True),
+    Column("challenge_id", Integer, ForeignKey(Challenge.id)),
+    Column("user_id", String, ForeignKey(User.id)),
+    Column("joined_at", DateTime, default=datetime.datetime.now),
+)

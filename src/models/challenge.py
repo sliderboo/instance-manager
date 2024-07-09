@@ -1,30 +1,24 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Union
 
 
 class QueryChallengeModel(BaseModel):
-    author: Optional[str] = None
-    category: Optional[str] = None
     title: Optional[str] = None
     id: Optional[int] = None
 
 
-class ImageConfig(BaseModel):
+class ServiceConfig(BaseModel):
+    image: str
     name: str
-    tag: Optional[str] = "latest"
-    ports: Optional[List[int]] = None
+    cpu: Union[int, str, None, float] = "0.5"
+    memory: Optional[str] = "1G"
+    ports: Optional[List[int]] = []
     privileged: Optional[bool] = False
-    environment: Optional[dict] = None
-    cap_add: Optional[List[str]] = None
-    custom_host_name: Optional[str] = None
+    environment: Optional[List[str]] = []
+    cap_add: Optional[List[str]] = []
 
 
 class ChallengeConfig(BaseModel):
     title: str
-    description: str
-    category: str
-    author: str
-
-    enc_flag: str
-
-    images: List[ImageConfig]
+    visible: Optional[bool] = True
+    services: List[ServiceConfig]

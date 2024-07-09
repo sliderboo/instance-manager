@@ -23,10 +23,17 @@ config = {
         "HOST": os.getenv("DOCKER_HOST", "unix:///var/run/docker.sock"),
         "USERNAME": os.getenv("DOCKER_USERNAME", ""),
         "PASSWORD": os.getenv("DOCKER_PASSWORD", ""),
-        "REGISTRY": os.getenv("DOCKER_REGISTRY", "https://index.docker.io/v1/"),
+        "REGISTRY": os.getenv("DOCKER_REGISTRY", "ghcr.io"),
+        "MIN_PORT": os.getenv("DOCKER_MIN_PORT", 51801),
+        "MAX_PORT": os.getenv("DOCKER_MAX_PORT", 51901),
     },
     "DEBUG": os.getenv("DEBUG", False),
-    "PUBLIC_KEY": os.getenv("PUBLIC_KEY", ""),
-    "PRIVATE_KEY": os.getenv("PRIVATE_KEY", ""),
-    "BOT_TOKEN": os.getenv("BOT_TOKEN", "i_am_bot"),
+    "BOT_TOKEN": os.getenv("BOT_TOKEN", "i_am_a_bot"),
+    "CTF_PLATFORM": os.getenv("CTF_PLATFORM", "ctfd"),
+    "CTFD": {
+        "URL": os.getenv("CTFD_URL", "http://ctf.bkisc.com"),
+    },
+    "CHALLENGE_HOST": {
+        "HOST": os.getenv("CHALLENGE_HOST", "lab.bkisc.com"),
+    },
 }

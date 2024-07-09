@@ -1,0 +1,342 @@
+{% extends "base.html" %} {% block content %}
+<style>
+    :root {
+        --primary-color: #00ff00;
+        --secondary-color: #ff00ff;
+        --background-color: #000000;
+        --text-color: #ffffff;
+        --alert-color: #ff0000;
+    }
+
+    .pixel-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 20px;
+        background-color: rgba(0, 0, 0, 0.8);
+        border: 4px solid var(--primary-color);
+        box-shadow: 8px 8px 0px var(--secondary-color);
+    }
+
+    .pixel-title {
+        font-size: 32px;
+        color: var(--primary-color);
+        text-shadow: 2px 2px var(--secondary-color);
+        text-align: center;
+        margin-bottom: 30px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .pixel-card {
+        border: 2px solid var(--primary-color);
+        margin-bottom: 20px;
+    }
+
+    .pixel-card-header {
+        background-color: var(--primary-color);
+        color: var(--background-color);
+        padding: 10px;
+        font-size: 24px;
+        text-transform: uppercase;
+    }
+
+    .pixel-card-body {
+        padding: 20px;
+    }
+
+    .pixel-list {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .pixel-list-item {
+        display: flex;
+        align-items: center;
+        background-color: #000;
+        border: 2px solid var(--primary-color);
+        box-shadow: 3px 3px 0 var(--secondary-color);
+        font-family: "Press Start 2P", cursive;
+        color: var(--text-color);
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    .pixel-button {
+        background-color: var(--primary-color);
+        color: var(--background-color);
+        border: none;
+        padding: 10px 20px;
+        font-family: "Press Start 2P", cursive;
+        font-size: 16px;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 3px 3px 0px var(--secondary-color);
+    }
+
+    .pixel-button:hover {
+        background-color: var(--secondary-color);
+        box-shadow: 3px 3px 0px var(--primary-color);
+        transform: translate(-2px, -2px);
+    }
+
+    .pixel-button:active {
+        transform: translate(2px, 2px);
+        box-shadow: 1px 1px 0px var(--primary-color);
+    }
+
+    .pixel-button.danger {
+        background-color: var(--alert-color);
+    }
+
+    .pixel-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+
+    .pixel-link:hover {
+        color: var(--secondary-color);
+        text-shadow: 0 0 5px var(--primary-color);
+    }
+
+    .pixel-code {
+        background-color: rgba(0, 255, 0, 0.1);
+        border: 1px solid var(--primary-color);
+        padding: 5px;
+        font-family: monospace;
+    }
+
+    .pixel-icon {
+        font-size: 1.2em;
+        margin-right: 10px;
+    }
+
+    .pixel-port {
+        background-color: var(--primary-color);
+        color: var(--background-color);
+        padding: 5px;
+        margin: 0 5px;
+        font-weight: bold;
+    }
+
+    .out-port {
+        border: 2px solid var(--secondary-color);
+    }
+
+    .in-port {
+        border: 2px solid #00ffff;
+    }
+
+    .pixel-arrow {
+        font-size: 1em;
+        margin: 0px 10px 10px;
+        color: var(--secondary-color);
+        text-shadow: 2px 2px #00ffff;
+    }
+
+    @keyframes blink {
+        0%,
+        100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.5;
+        }
+    }
+
+    .blink {
+        animation: blink 1s infinite;
+    }
+
+    .admin-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+</style>
+
+<div class="pixel-container">
+    <h2 class="pixel-title">Challenge Details</h2>
+
+    <div class="pixel-card">
+        <div class="pixel-card-header">{{ challenge.title }}</div>
+        <div class="pixel-card-body">
+            <h5 class="mb-3">Players</h5>
+            <ul id="playerList" class="pixel-list">
+                {% for player in challenge.players %}
+                <li class="pixel-list-item">
+                    {{ player }} {% if user and user.is_admin %}
+                    <button
+                        class="pixel-button danger kick-player"
+                        data-player="{{ player }}"
+                    >
+                        Kick
+                    </button>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+            {% if user and user.is_admin %}
+            <div class="admin-buttons">
+                <button id="kickAllPlayers" class="pixel-button danger">
+                    Kick All
+                </button>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if challenge.joined %}
+        <div class="pixel-card-body">
+            <h5 class="mb-3">Services</h5>
+            <ul class="pixel-list">
+                {% for service in challenge.services %}
+                <li class="pixel-list-item">
+                    <strong>{{ service.name.capitalize() }}:</strong> {{
+                    service.ports|join(', ') }}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="pixel-card-body">
+            <h5 class="mb-3">Connection Info</h5>
+            <p class="mb-2">
+                Host: <strong>{{ challenge.connection_info.host }}</strong>
+            </p>
+            <ul class="pixel-list">
+                {% for in_port, out_port in
+                challenge.connection_info.ports.items() %}
+                <li class="pixel-list-item">
+                    <span class="pixel-icon">&#x1F4E6;</span>
+                    <span class="pixel-port out-port">{{ out_port }}</span>
+                    <span class="pixel-arrow">&rarr;</span>
+                    <span class="pixel-port in-port">{{ in_port }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+
+            <div class="mt-3">
+                <h6 class="text-success">For Pwnable:</h6>
+                <ul class="pixel-list">
+                    {% for out_port in challenge.connection_info.ports.values()
+                    %}
+                    <li class="pixel-list-item">
+                        <code class="pixel-code"
+                            >nc {{ challenge.connection_info.host }} {{ out_port
+                            }}</code
+                        >
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="mt-3">
+                <h6 class="text-success">For Web:</h6>
+                <ul class="pixel-list">
+                    {% for out_port in challenge.connection_info.ports.values()
+                    %}
+                    <li class="pixel-list-item">
+                        <a
+                            href="http://{{ challenge.connection_info.host }}:{{ out_port }}"
+                            target="_blank"
+                            class="pixel-link"
+                        >
+                            http://{{ challenge.connection_info.host }}:{{
+                            out_port }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="d-flex justify-content-between mt-4">
+        <a href="/" class="pixel-button">Back to Challenges</a>
+        {% if challenge.joined %}
+        <button id="leaveChallenge" class="pixel-button danger">
+            Leave Challenge
+        </button>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    var challengeId = "{{ challenge.id }}";
+    var leaveChallenge = document.getElementById("leaveChallenge");
+    var isAdmin = {% if user and user.is_admin %}true{% else %}false{% endif %};
+
+    if (leaveChallenge) {
+        leaveChallenge.addEventListener("click", function() {
+            leaveChallenge.disabled = true;
+            leaveChallenge.innerHTML = '<span class="blink">Leaving...</span>';
+
+            fetch("/api/challenge/leave", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ challenge_id: challengeId }),
+            })
+                .then(function(response) {
+                    if (response.ok) {
+                        window.location.href = "/";
+                    }
+                })
+                .catch(function(error) {
+                    console.error("Error:", error);
+                    leaveChallenge.disabled = false;
+                    leaveChallenge.innerHTML = "Leave Challenge";
+                });
+        });
+    }
+
+    if (isAdmin) {
+        var kickAllPlayers = document.getElementById("kickAllPlayers");
+        var kickPlayerButtons = document.querySelectorAll(".kick-player");
+
+        kickAllPlayers.addEventListener("click", function() {
+            kickAllPlayers.disabled = true;
+            kickAllPlayers.innerHTML = '<span class="blink">Kicking all...</span>';
+
+            fetch(`/api/challenge/${challengeId}/kick_all`, {
+                method: "GET",
+            })
+                .then(function(response) {
+                    if (response.ok) {
+                        location.reload();
+                    }
+                })
+                .catch(function(error) {
+                    console.error("Error:", error);
+                    kickAllPlayers.disabled = false;
+                    kickAllPlayers.innerHTML = "Kick All";
+                });
+        });
+
+        kickPlayerButtons.forEach(function(button) {
+            button.addEventListener("click", function(event) {
+                var player = event.target.getAttribute("data-player");
+                event.target.disabled = true;
+                event.target.innerHTML = '<span class="blink">Kicking...</span>';
+
+                fetch(`/api/challenge/${challengeId}/kick?email=${player}`, {
+                    method: "GET",
+                })
+                    .then(function(response) {
+                        if (response.ok) {
+                            location.reload();
+                        }
+                    })
+                    .catch(function(error) {
+                        console.error("Error:", error);
+                        event.target.disabled = false;
+                        event.target.innerHTML = "Kick";
+                    });
+            });
+        });
+    }
+</script>
+{% endblock %}

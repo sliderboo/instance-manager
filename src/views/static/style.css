@@ -1,0 +1,89 @@
+:root {
+    --primary-color: #00ff00;
+    --secondary-color: #ff00ff;
+    --background-color: #000000;
+    --text-color: #ffffff;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Press Start 2P", cursive;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+}
+
+.navbar {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-bottom: 2px solid var(--primary-color);
+    padding: 1rem 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    text-decoration: none;
+    text-shadow: 2px 2px var(--secondary-color);
+}
+
+.navbar-nav {
+    display: flex;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-item {
+    margin-left: 1rem;
+}
+
+.nav-link,
+.btn-8bit {
+    color: var(--text-color);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--primary-color);
+    background-color: var(--background-color);
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover,
+.btn-8bit:hover {
+    background-color: var(--primary-color);
+    color: var(--background-color);
+    box-shadow: 3px 3px 0 var(--secondary-color);
+}
+
+.content {
+    flex: 1 0 auto;
+    padding: 2rem 0;
+}
+
+footer {
+    flex-shrink: 0;
+    text-align: center;
+    padding: 10rem 0 0;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-top: 2px solid var(--primary-color);
+}
+
+.icon {
+    margin-right: 0.5rem;
+}

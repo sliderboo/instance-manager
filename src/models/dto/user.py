@@ -10,7 +10,6 @@ class NewUserRequest(BaseModel):
 
 class UserResponse(BaseModel):
     id: str
-    slug: str
     email: str
     display_name: str
 
@@ -26,6 +25,7 @@ class NewUserResponseModel(ResponseModel):
 
 class AuthModel(BaseModel):
     token: str
+
 
 class AuthResponseModel(ResponseModel):
     data: AuthModel

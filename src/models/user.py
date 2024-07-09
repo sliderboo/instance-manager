@@ -3,14 +3,13 @@ from typing import Optional
 
 
 class UserModel(BaseModel):
-    id: str
-    slug: str
+    id: Optional[str] = None
     email: str
-    password: str
     display_name: str
+    is_admin: Optional[bool] = False
 
 
 class QueryUserModel(BaseModel):
-    slug: Optional[str] = None
     email: Optional[str] = None
     id: Optional[str] = None
+    display_name: Optional[str] = None
