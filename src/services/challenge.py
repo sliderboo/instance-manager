@@ -147,6 +147,21 @@ class ChallengeService:
         except:
             return False
 
+    def delete_challenge(self, challenge_id: int):
+        try:
+            challenge = self._repo.find_one(QueryChallengeModel(id=challenge_id))
+            if not challenge:
+                return False
+            
+            self.kick_all(challenge_id)
+            clean_challenge.delay(challenge_id)
+
+            success = self._repo.delete(challenge_id)
+            return success
+        except Exception as e:
+            print(f"Error deleting challenge: {e}")
+            return False
+
     def check_exist(self, enc_config: str):
         ops = ChallOpsHandler(enc_config=enc_config)
         return self._repo.find_one(QueryChallengeModel(title=ops.cfg.title)) is not None

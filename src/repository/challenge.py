@@ -164,3 +164,18 @@ class ChallengeRepository:
         except Exception as e:
             log.debug(f"Error: {e}")
             return []
+
+    def delete(self, challenge_id: int):
+        try:
+            challenge = self.find_one(QueryChallengeModel(id=challenge_id))
+            if not challenge:
+                return False
+            
+            # Delete the challenge (cascade will handle related services and joins)
+            self._session.delete(challenge)
+            self._session.commit()
+            return True
+        except Exception as e:
+            log.debug(f"Error deleting challenge: {e}")
+            self._session.rollback()
+            return False

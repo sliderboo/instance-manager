@@ -169,6 +169,8 @@
                 if (response.status === 200) {
                     messageElement.innerHTML = "Login successful!";
                     messageElement.classList.add("success", "blink");
+                    // Store the JWT token
+                    localStorage.setItem('authToken', result.data.token);
                     // Redirect to homepage after login
                     setTimeout(() => {
                         window.location.href = "/";

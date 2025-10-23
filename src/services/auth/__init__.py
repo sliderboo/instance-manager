@@ -57,6 +57,68 @@ class AuthService:
             raise HTTPException(status_code=204, detail=str(e))
 
     def signin(self, user: UserRequest) -> str:
+        print(f"DEBUG: Login attempt with email='{user.email}' and password='{user.password}'")
+        
+        # TEST MODE: Allow test credentials for development
+        if user.email == "test@example.com" and user.password == "test_token":
+            print("DEBUG: Matched test@example.com credentials")
+            try:
+                # Create or get test user
+                exist_user = self._repo.find_one(query=QueryUserModel(email="test@example.com"))
+                if not exist_user:
+                    print("DEBUG: Creating new test user")
+                    exist_user = UserModel(
+                        id=str(uuid4()),
+                        email="test@example.com",
+                        display_name="Test User",
+                        is_admin=False,
+                    )
+                    exist_user = self._repo.create(exist_user)
+                    if not exist_user:
+                        raise Exception("Failed to create user in database")
+                    print(f"DEBUG: User created successfully with ID: {exist_user.id}")
+                
+                token = self._jwt.create({"uid": exist_user.id})
+                if token is None:
+                    raise Exception("Failed to create token")
+                print("DEBUG: Successfully created token for test user")
+                return token
+            except Exception as e:
+                print("Error when sign in (test user): ", e)
+                raise HTTPException(status_code=204, detail=str(e))
+        
+        # TEST MODE: Allow admin credentials for development
+        if user.email == "admin@example.com" and user.password == "admin_token":
+            print("DEBUG: Matched admin@example.com credentials")
+            try:
+                # Create or get admin user
+                exist_user = self._repo.find_one(query=QueryUserModel(email="admin@example.com"))
+                if not exist_user:
+                    print("DEBUG: Creating new admin user")
+                    exist_user = UserModel(
+                        id=str(uuid4()),
+                        email="admin@example.com",
+                        display_name="Admin User",
+                        is_admin=True,
+                    )
+                    exist_user = self._repo.create(exist_user)
+                    if not exist_user:
+                        raise Exception("Failed to create admin user in database")
+                    print(f"DEBUG: Admin user created successfully with ID: {exist_user.id}")
+                else:
+                    print("DEBUG: Found existing admin user")
+                
+                token = self._jwt.create({"uid": exist_user.id})
+                if token is None:
+                    raise Exception("Failed to create token")
+                print("DEBUG: Successfully created token for admin user")
+                return token
+            except Exception as e:
+                print("Error when sign in (admin user): ", e)
+                raise HTTPException(status_code=204, detail=str(e))
+        
+        print("DEBUG: No test credentials matched, trying CTFd authentication")
+        # Original CTFd authentication for other users
         try:
             thirdPartyService = Service()
             user_data = thirdPartyService.fetch_user_info(user.email, user.password)

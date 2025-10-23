@@ -270,6 +270,32 @@
     .search-button:hover {
         background-color: var(--secondary-color);
     }
+
+    .delete-button {
+        background-color: var(--alert-color) !important;
+        border: 2px solid var(--alert-color) !important;
+    }
+
+    .delete-button:hover {
+        background-color: #cc0000 !important;
+        border: 2px solid #cc0000 !important;
+        transform: translate(-2px, -2px);
+    }
+
+    .delete-button:active {
+        transform: translate(2px, 2px);
+        box-shadow: 1px 1px 0px #990000;
+    }
+
+    .admin-controls {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 2px dashed var(--alert-color);
+    }
+
+    .admin-controls-inline {
+        margin-top: 10px;
+    }
 </style>
 
 <div class="pixel-container">
@@ -339,6 +365,13 @@
             {% endif %}
 
             {% set joined_info = join | selectattr('id', 'equalto', challenge.id|int) | first %}
+            
+            {% if user and user.is_admin and not joined_info %}
+            <div class="admin-controls">
+                <button class="pixel-button delete-button" id="btn_delete_{{ challenge.id }}">Delete Quest</button>
+            </div>
+            {% endif %}
+
             <div>
                 {% if joined_info %}
                 <button class="pixel-button" disabled>Quest Joined</button>
@@ -428,6 +461,52 @@ kickALlButtons.forEach(button => {
                     document.getElementById('alert-banner').classList.remove('d-none');
                 }
             });
+    });
+});
+
+deleteButtons = document.querySelectorAll('[id^="btn_delete_"]');
+deleteButtons.forEach(button => {
+    button.addEventListener('click', function() {
+        const [_, n, challengeId] = button.id.split('_');
+        
+        // Confirm deletion
+        if (confirm('Are you sure you want to delete this quest? This action cannot be undone!')) {
+            button.disabled = true;
+            button.innerHTML = 'Deleting...';
+            
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                alert('You are not authenticated. Please log in again.');
+                button.disabled = false;
+                button.innerHTML = 'Delete Quest';
+                return;
+            }
+            
+            fetch(`/api/challenge/${challengeId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 200) {
+                    // Remove the challenge box from DOM
+                    button.closest('.challenge-box').remove();
+                    alert('Quest deleted successfully!');
+                } else {
+                    alert('Failed to delete quest: ' + data.status);
+                    button.disabled = false;
+                    button.innerHTML = 'Delete Quest';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while deleting the quest');
+                button.disabled = false;
+                button.innerHTML = 'Delete Quest';
+            });
+        }
     });
 });
 {% endif %}

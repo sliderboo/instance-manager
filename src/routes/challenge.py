@@ -140,6 +140,25 @@ async def request_stop_instance(
     )
 
 
+@router.delete("/{challenge_id}")
+async def delete_challenge(
+    challenge_id: int,
+    service: ChallengeService = Depends(ChallengeService),
+):
+    # Check if user is admin or bot
+    if not service._user or (service._user.id != "bot" and not service._user.is_admin):
+        return APIResponse.as_json(
+            code=status.HTTP_403_FORBIDDEN, 
+            status="You are not allowed to delete challenges"
+        )
+    
+    success = service.delete_challenge(challenge_id)
+    return APIResponse.as_json(
+        code=status.HTTP_200_OK if success else status.HTTP_404_NOT_FOUND,
+        status="Challenge deleted successfully" if success else "Challenge not found",
+    )
+
+
 @router.get("/list")
 async def list_challenges(
     page: int,

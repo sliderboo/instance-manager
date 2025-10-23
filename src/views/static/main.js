@@ -1,9 +1,25 @@
 document.getElementById('logout_button').addEventListener("click", async function () {
     let r = await fetch("/api/auth/logout").then(res => res.json());
     if (r.code === 200) {
+        // Clear stored token on logout
+        localStorage.removeItem('authToken');
         window.location.href = "/";
     }
 });
+
+// Helper function to get auth headers
+function getAuthHeaders() {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+        return {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        };
+    }
+    return {
+        'Content-Type': 'application/json'
+    };
+}
 
 let buttonTypes = ['start', 'leave', 'join'];
 
@@ -21,9 +37,7 @@ for (let buttonType of buttonTypes) {
                 chall_id = buttonId.split('_')[2];
                 let r = await fetch(`/api/challenge/${buttonType}`, {
                     "method": "POST",
-                    "headers": {
-                        "Content-Type": "application/json"
-                    },
+                    "headers": getAuthHeaders(),
                     "body": JSON.stringify({
                         "challenge_id": chall_id
                     })
@@ -71,7 +85,9 @@ function hideAlert() {
 
 async function waitForServer(chall_id, stop_status) {
     await new Promise(r => setTimeout(r, 2000));
-    let r = await fetch(`/api/challenge/${chall_id}/status`).then(res => res.json());
+    let r = await fetch(`/api/challenge/${chall_id}/status`, {
+        headers: getAuthHeaders()
+    }).then(res => res.json());
     if (r?.code === 200) {
         if (r?.data === stop_status) {
             return true;
