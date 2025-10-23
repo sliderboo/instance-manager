@@ -34,6 +34,6 @@ config = {
         "URL": os.getenv("CTFD_URL", "http://ctf.bkisc.com"),
     },
     "CHALLENGE_HOST": {
-        "HOST": os.getenv("CHALLENGE_HOST", "localhost"),
+        "HOST": os.getenv("CHALLENGE_HOST", "192.168.1.38"),
     },
 }

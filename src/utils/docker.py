@@ -20,6 +20,14 @@ class DockerHandler:
             raise Exception("Failed to connect to docker")
 
     def verify_image(self, image_name: str):
+        # First check if image exists locally
+        try:
+            self._client.images.get(image_name)
+            return True
+        except:
+            pass
+        
+        # If not found locally, check registry
         auth_config = None
         if self._username and self._password and self._registry in image_name:
             auth_config = {
