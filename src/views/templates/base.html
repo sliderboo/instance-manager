@@ -1,94 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Mission Impossible</title>
+<html lang="en" data-bs-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Instance Manager</title>
 
-        <!-- Fonts -->
-        <link
-            href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
-            rel="stylesheet"
-        />
+    <!-- Icons & Bootstrap -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" />
 
-        <!-- Stylesheets -->
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-        />
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css"
-        />
-        <link rel="stylesheet" href="/static/style.css" />
-
-        <!-- Favicon -->
-        <link rel="icon" href="/static/logo.png" />
-    </head>
-    <body class="d-flex flex-column min-vh-100">
-        <nav class="navbar navbar-expand-lg">
-            <div class="container">
-                <a class="navbar-brand" href="/">
-                    <i class="fas fa-microchip me-2"></i>Missions
-                </a>
-                <button
-                    class="navbar-toggler"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#navbarNav"
-                    aria-controls="navbarNav"
-                    aria-expanded="false"
-                    aria-label="Toggle navigation"
-                >
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div
-                    class="collapse navbar-collapse justify-content-end"
-                    id="navbarNav"
-                >
-                    <ul class="navbar-nav">
-                        {% if not user %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="/signin">
-                                <i class="fas fa-sign-in-alt me-2"></i>Sign In
-                            </a>
-                        </li>
-                        <!-- Commented out Sign Up option
+    <!-- Modern Theme -->
+    <link rel="stylesheet" href="/static/style.css" />
+    <link rel="icon" href="/static/logo.png" />
+  </head>
+  <body class="d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand-lg">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="/">
+          <i class="fas fa-server me-2"></i>
+          <span class="fw-bold">Instance Manager</span>
+        </a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+          <ul class="navbar-nav">
+            {% if not user %}
             <li class="nav-item">
-              <a class="nav-link" href="/signup">
-                <i class="fas fa-user-plus me-2"></i>Sign Up
-              </a>
+              <a class="nav-link" href="/signin"><i class="fas fa-sign-in-alt me-2"></i>Sign In</a>
             </li>
-            -->
-                        {% else %}
-                        <li class="nav-item">
-                            <button
-                                class="btn btn-outline-primary"
-                                id="logout_button"
-                            >
-                                <i class="fas fa-sign-out-alt me-2"></i>Logout
-                            </button>
-                        </li>
-                        {% endif %}
-                    </ul>
-                </div>
-            </div>
-        </nav>
+            {% else %}
+            <li class="nav-item">
+              <button class="btn btn-outline-primary" id="logout_button">
+                <i class="fas fa-sign-out-alt me-2"></i>Logout
+              </button>
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
 
-        <main class="flex-grow-1 py-4">
-            <div class="container">{% block content %}{% endblock %}</div>
-        </main>
+    <main class="flex-grow-1 py-4">
+      <div class="container">
+        {% block content %}{% endblock %}
+      </div>
+    </main>
 
-        <footer class="py-3 mt-auto">
-            <div class="container text-center">
-                <p class="mb-0">
-                    <i class="far fa-copyright me-2"></i>2024 Made by hah4
-                </p>
-            </div>
-        </footer>
+    <footer class="py-3 mt-auto">
+      <div class="container text-center">
+        <p class="mb-0"><i class="far fa-copyright me-2"></i>2024 Made by hah4</p>
+      </div>
+    </footer>
 
-        <!-- Scripts -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    </body>
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/main.js"></script>
+  </body>
 </html>
