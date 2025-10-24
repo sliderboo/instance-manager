@@ -1,514 +1,558 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
-    :root {
-        --primary-color: #00ff00;
-        --secondary-color: #ff00ff;
-        --background-color: #000000;
-        --text-color: #ffffff;
-        --alert-color: #ff0000;
-    }
+/* Additional Modern Styles for Index Page */
+.hero-section {
+    text-align: center;
+    padding: 3rem 0 2rem;
+    margin-bottom: 2rem;
+}
 
-    body {
-        background-color: var(--background-color);
-        color: var(--text-color);
-        font-family: 'Press Start 2P', cursive;
-        line-height: 1.6;
-        margin: 0;
-        padding: 0;
-    }
+.hero-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #007AFF, #5856D6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+    animation: slideUp 0.6s ease-out;
+}
 
-    .pixel-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-    }
+.hero-subtitle {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.1rem;
+    animation: slideUp 0.6s ease-out 0.1s both;
+}
 
-    .pixel-box {
-        border: 4px solid var(--primary-color);
-        background-color: rgba(0, 0, 0, 0.8);
-        padding: 30px;
-        margin-bottom: 30px;
-        box-shadow: 8px 8px 0px var(--primary-color);
-        position: relative;
-        overflow: hidden;
-        width: 100%;
-        box-sizing: border-box;
-    }
+.welcome-card {
+    background: linear-gradient(135deg, rgba(0, 122, 255, 0.1), rgba(88, 86, 214, 0.1));
+    border: 1px solid rgba(0, 122, 255, 0.3);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    animation: slideUp 0.6s ease-out;
+}
 
-    .pixel-box::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: repeating-linear-gradient(
-            to right,
-            var(--primary-color),
-            var(--primary-color) 10px,
-            transparent 10px,
-            transparent 20px
-        );
-    }
+.welcome-card h2 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
 
-    .pixel-title {
-        font-size: 28px;
-        color: var(--primary-color);
-        text-shadow: 2px 2px var(--secondary-color);
-        margin-bottom: 20px;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-    }
+.quest-section {
+    background: rgba(28, 28, 30, 0.6);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
 
-    .pixel-text {
-        font-size: 16px;
-        margin-bottom: 15px;
-    }
+.quest-stage {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-left: 3px solid var(--primary);
+    background: rgba(0, 122, 255, 0.05);
+    border-radius: 8px;
+}
 
-    .pixel-list {
-        list-style-type: none;
-        padding-left: 20px;
-    }
+.quest-stage:last-child {
+    margin-bottom: 0;
+}
 
-    .pixel-list li {
-        margin-bottom: 10px;
-    }
+.quest-stage h4 {
+    color: var(--primary);
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+}
 
-    .pixel-list li::before {
-        content: ">";
-        color: var(--secondary-color);
-        margin-right: 10px;
-    }
+.quest-list {
+    list-style: none;
+    padding-left: 0;
+}
 
-    .pixel-button {
-        background-color: var(--primary-color);
-        color: var(--background-color);
-        border: none;
-        padding: 12px 24px;
-        font-family: 'Press Start 2P', cursive;
-        font-size: 16px;
-        text-transform: uppercase;
-        cursor: pointer;
-        transition: all 0.3s;
-        margin: 10px 5px;
-        box-shadow: 3px 3px 0px var(--secondary-color);
-        position: relative;
-        overflow: hidden;
-    }
+.quest-list li {
+    padding: 0.5rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+}
 
-    .pixel-button:hover {
-        background-color: var(--secondary-color);
-        color: var(--background-color);
-        box-shadow: 3px 3px 0px var(--primary-color);
-        transform: translate(-2px, -2px);
-    }
+.quest-list li:before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--primary);
+    font-weight: bold;
+}
 
-    .pixel-button:active {
-        transform: translate(2px, 2px);
-        box-shadow: 1px 1px 0px var(--primary-color);
-    }
+.search-container {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: center;
+    animation: slideUp 0.6s ease-out 0.2s both;
+}
 
-    .pixel-button:disabled {
-        background-color: #666666;
-        cursor: not-allowed;
-        box-shadow: none;
-    }
+.search-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+}
 
-    .pixel-alert {
-        border: 4px solid var(--alert-color);
-        background-color: var(--background-color);
-        color: var(--alert-color);
-        padding: 15px;
-        margin-bottom: 30px;
-        box-shadow: 5px 5px 0px var(--alert-color);
-        animation: blink 1s infinite;
-    }
+.search-input {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    padding-left: 3rem;
+    background: rgba(28, 28, 30, 0.8);
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    color: white;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
 
-    @keyframes blink {
-        0% { opacity: 1; }
-        50% { opacity: 0.5; }
-        100% { opacity: 1; }
-    }
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
 
-    .pixel-pagination {
-        display: flex;
-        justify-content: center;
-        margin-top: 30px;
-    }
+.search-icon {
+    position: absolute;
+    left: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.5);
+}
 
-    .pixel-pagination a {
-        color: var(--primary-color);
-        text-decoration: none;
-        padding: 10px 15px;
-        margin: 0 5px;
-        border: 2px solid var(--primary-color);
-        background-color: var(--background-color);
-        transition: all 0.3s;
-    }
+.challenge-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
 
-    .pixel-pagination a:hover,
-    .pixel-pagination a.active {
-        background-color: var(--primary-color);
-        color: var(--background-color);
-        transform: scale(1.1);
-    }
+.challenge-card {
+    background: rgba(28, 28, 30, 0.8);
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    animation: slideUp 0.6s ease-out both;
+}
 
-    .challenge-box {
-        border: 2px dashed var(--secondary-color);
-        padding: 20px;
-        margin-bottom: 20px;
-        transition: all 0.3s;
-    }
+.challenge-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--primary);
+    box-shadow: 0 8px 24px rgba(0, 122, 255, 0.2);
+}
 
-    .challenge-box:hover {
-        transform: scale(1.02);
-        box-shadow: 0 0 10px var(--secondary-color);
-    }
+.challenge-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
 
-    .pixel-header {
-        text-align: center;
-        margin-bottom: 40px;
-        font-size: 48px;
-        color: var(--primary-color);
-        text-shadow: 4px 4px var(--secondary-color);
-        letter-spacing: 4px;
-        animation: glow 2s infinite alternate;
-    }
+.challenge-card:hover::before {
+    opacity: 1;
+}
 
-    @keyframes glow {
-        from {
-            text-shadow: 4px 4px var(--secondary-color);
-        }
-        to {
-            text-shadow: 4px 4px var(--secondary-color), 0 0 20px var(--primary-color);
-        }
-    }
+.challenge-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: white;
+}
 
-    .pixel-subheader {
-        font-size: 20px;
-        color: var(--secondary-color);
-        text-align: center;
-        margin-bottom: 25px;
-    }
+.challenge-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+}
 
+.player-count {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(0, 122, 255, 0.1);
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.player-list {
+    max-height: 150px;
+    overflow-y: auto;
+    margin: 1rem 0;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+}
+
+.player-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.player-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.player-list::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 10px;
+}
+
+.player-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.player-item:last-child {
+    border-bottom: none;
+}
+
+.challenge-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.challenge-actions .btn {
+    flex: 1;
+    min-width: 120px;
+}
+
+.admin-section {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.alert-banner {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    max-width: 400px;
+    background: rgba(255, 59, 48, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+}
+
+.pagination-btn {
+    padding: 0.75rem 1.25rem;
+    background: rgba(28, 28, 30, 0.8);
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.pagination-btn:hover {
+    border-color: var(--primary);
+    background: rgba(0, 122, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.pagination-btn.active {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+@media (max-width: 768px) {
     .challenge-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 20px;
+        grid-template-columns: 1fr;
     }
-
-    .quest-stage {
-        border-left: 4px solid var(--secondary-color);
-        padding-left: 15px;
-        margin-bottom: 20px;
+    
+    .hero-title {
+        font-size: 2rem;
     }
-
-    .quest-stage h4 {
-        color: var(--secondary-color);
+    
+    .challenge-actions {
+        flex-direction: column;
     }
-
-    .pixel-box-inner {
-        background-color: rgba(255, 255, 255, 0.1);
-        padding: 20px;
-        border: 2px solid var(--primary-color);
-        margin-top: 20px;
+    
+    .challenge-actions .btn {
+        width: 100%;
     }
-
-    .player-list {
-        max-height: 150px;
-        overflow-y: auto;
-        padding-right: 10px;
-    }
-
-    .player-list::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    .player-list::-webkit-scrollbar-track {
-        background: var(--background-color);
-    }
-
-    .player-list::-webkit-scrollbar-thumb {
-        background-color: var(--primary-color);
-        border-radius: 4px;
-    }
-
-    .search-box {
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: center;
-    }
-
-    .search-input {
-        font-family: 'Press Start 2P', cursive;
-        font-size: 16px;
-        padding: 10px;
-        border: 2px solid var(--primary-color);
-        background-color: var(--background-color);
-        color: var(--text-color);
-        width: 60%;
-        max-width: 400px;
-    }
-
-    .search-input:focus {
-        outline: none;
-        box-shadow: 0 0 5px var(--secondary-color);
-    }
-
-    .search-button {
-        font-family: 'Press Start 2P', cursive;
-        font-size: 16px;
-        padding: 10px 20px;
-        background-color: var(--primary-color);
-        color: var(--background-color);
-        border: none;
-        cursor: pointer;
-        transition: all 0.3s;
-    }
-
-    .search-button:hover {
-        background-color: var(--secondary-color);
-    }
-
-    .delete-button {
-        background-color: var(--alert-color) !important;
-        border: 2px solid var(--alert-color) !important;
-    }
-
-    .delete-button:hover {
-        background-color: #cc0000 !important;
-        border: 2px solid #cc0000 !important;
-        transform: translate(-2px, -2px);
-    }
-
-    .delete-button:active {
-        transform: translate(2px, 2px);
-        box-shadow: 1px 1px 0px #990000;
-    }
-
-    .admin-controls {
-        margin-top: 15px;
-        padding-top: 15px;
-        border-top: 2px dashed var(--alert-color);
-    }
-
-    .admin-controls-inline {
-        margin-top: 10px;
-    }
+}
 </style>
 
-<div class="pixel-container">
-    <h1 class="pixel-header">Missions</h1>
+<div class="hero-section">
+    <h1 class="hero-title">
+        <i class="fas fa-cube me-2"></i>Instance Manager
+    </h1>
+    <p class="hero-subtitle">Deploy and manage your challenge instances</p>
+</div>
+
+{% if not user %}
+<div class="welcome-card">
+    <h2><i class="fas fa-rocket me-2"></i>Welcome to Instance Manager!</h2>
+    <p style="color: rgba(255, 255, 255, 0.8); line-height: 1.8;">
+        Get started by signing in with your CTFd credentials. Once authenticated, you'll be able to deploy and manage challenge instances seamlessly.
+    </p>
     
-    {% if not user %}
-    <div class="pixel-box">
-        <h2 class="pixel-title">Welcome, Player One!</h2>
-        <p class="pixel-text">Embark on your quest to manage instances. Sign up to begin your adventure, or sign in if you're a returning hero.</p>
+    <div class="quest-section">
+        <h3 style="font-size: 1.3rem; margin-bottom: 1rem;">
+            <i class="fas fa-key me-2"></i>Getting Your Access Token
+        </h3>
         
-        <div class="pixel-box-inner">
-            <h3 class="pixel-title">Quest: Obtain Your Access Token</h3>
-            <div class="quest-stage">
-                <h4 class="pixel-subheader">Stage 1: CTFd Settings</h4>
-                <p class="pixel-text">Navigate to your CTFd stronghold. Seek the profile icon in the top-right corner and venture into Settings.</p>
-            </div>
-            <div class="quest-stage">
-                <h4 class="pixel-subheader">Stage 2: Token Discovery</h4>
-                <p class="pixel-text">Descend to the Access Tokens realm. Activate the Generate Token spell and secure your newly forged key.</p>
-            </div>
-            <div class="quest-stage">
-                <h4 class="pixel-subheader">Stage 3: Portal Activation</h4>
-                <p class="pixel-text">Prepare for sign-in:</p>
-                <ul class="pixel-list">
-                    <li>Sigil (Email): Your registered communication rune.</li>
-                    <li>Access Token: The mystical key you've just acquired.</li>
-                </ul>
-            </div>
+        <div class="quest-stage">
+            <h4><i class="fas fa-user-cog me-2"></i>Step 1: Access Settings</h4>
+            <p style="margin: 0; color: rgba(255, 255, 255, 0.8);">
+                Navigate to your CTFd profile and click on Settings in the dropdown menu.
+            </p>
+        </div>
+        
+        <div class="quest-stage">
+            <h4><i class="fas fa-magic me-2"></i>Step 2: Generate Token</h4>
+            <p style="margin: 0; color: rgba(255, 255, 255, 0.8);">
+                Scroll down to the "Access Tokens" section and click "Generate" to create your personal access token.
+            </p>
+        </div>
+        
+        <div class="quest-stage">
+            <h4><i class="fas fa-sign-in-alt me-2"></i>Step 3: Sign In</h4>
+            <p style="margin-bottom: 0.75rem; color: rgba(255, 255, 255, 0.8);">
+                Use your credentials to sign in:
+            </p>
+            <ul class="quest-list">
+                <li><strong>Email:</strong> Your registered CTFd email address</li>
+                <li><strong>Access Token:</strong> The token you just generated</li>
+            </ul>
         </div>
     </div>
-    {% else %}
-    <div class="pixel-box">
-        <h2 class="pixel-title">Available Quests</h2>
-        {% if challenges %}
-        <div id="alert-banner" class="pixel-alert d-none" role="alert">
-            <strong>Quest Failed!</strong> The challenge resists your attempt. Regroup and try again, brave warrior.
-            <button type="button" class="pixel-button" onclick="hideAlert()">Dismiss</button>
+</div>
+{% else %}
+<!-- Alert Banner -->
+<div id="alert-banner" class="alert-banner d-none">
+    <div class="d-flex justify-content-between align-items-start">
+        <div>
+            <strong><i class="fas fa-exclamation-triangle me-2"></i>Operation Failed</strong>
+            <p class="mb-0 mt-1" style="font-size: 0.9rem;">Unable to complete the action. Please try again.</p>
         </div>
-        
-        <div class="search-box">
-            <input type="text" id="search-input" class="search-input" placeholder="Search quests...">
-            <button id="search-button" class="search-button">Search</button>
-        </div>
+        <button onclick="hideAlert()" class="btn-close btn-close-white ms-3"></button>
+    </div>
+</div>
 
-        <div class="challenge-grid" id="challenge-grid">
-        {% for challenge in challenges %}
-        <div class="challenge-box">
-            <h3 class="pixel-title">{{ challenge.title }}</h3>
-            <p class="pixel-text">{{ challenge.players|length }} adventurer{% if challenge.players|length != 1 %}s{% endif %} currently engaged</p>
+{% if challenges %}
+<!-- Search Bar -->
+<div class="search-container">
+    <div class="search-wrapper">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="search-input" class="search-input" placeholder="Search challenges...">
+    </div>
+</div>
 
-            {% if challenge.players|length > 0 %}
-            <div class="player-list">
-                <ul class="pixel-list">
-                    {% for player in challenge.players[:5] %}
-                    <li>{{ player }} {% if user and user.is_admin %}
-                    <button class="pixel-button" id="btn_kick_{{ challenge.id }}_{{ player }}">Kick</button>
-                    {% endif %}</li>
-                    
-                    {% endfor %}
-                </ul>
-            </div>
+<!-- Challenge Grid -->
+<div class="challenge-grid" id="challenge-grid">
+{% for challenge in challenges %}
+<div class="challenge-card" style="animation-delay: {{ loop.index0 * 0.05 }}s;">
+    <h3 class="challenge-title">{{ challenge.title }}</h3>
+    
+    <div class="player-count">
+        <i class="fas fa-users"></i>
+        <span>{{ challenge.players|length }} player{% if challenge.players|length != 1 %}s{% endif %} active</span>
+    </div>
+
+    {% if challenge.players|length > 0 %}
+    <div class="player-list">
+        {% for player in challenge.players %}
+        <div class="player-item">
+            <span><i class="fas fa-user me-2"></i>{{ player }}</span>
             {% if user and user.is_admin %}
-            <button class="pixel-button" id="btn_kickall_{{ challenge.id }}">Kick All</button>
+            <button class="btn btn-sm btn-danger" onclick="kickPlayer('{{ challenge.id }}', '{{ player }}')">
+                <i class="fas fa-times"></i>
+            </button>
             {% endif %}
-            {% else %}
-            <p class="pixel-text">No heroes have joined yet. Be the first!</p>
-            {% endif %}
-
-            {% set joined_info = join | selectattr('id', 'equalto', challenge.id|int) | first %}
-            
-            {% if user and user.is_admin and not joined_info %}
-            <div class="admin-controls">
-                <button class="pixel-button delete-button" id="btn_delete_{{ challenge.id }}">Delete Quest</button>
-            </div>
-            {% endif %}
-
-            <div>
-                {% if joined_info %}
-                <button class="pixel-button" disabled>Quest Joined</button>
-                <button class="pixel-button leave_button" id="btn_leave_{{ challenge.id }}">Abandon Quest</button>
-                <button class="pixel-button connect_button" id="btn_connect_{{ challenge.id }}">Enter Battle</button>
-                {% elif challenge.players|length > 0 %}
-                <button class="pixel-button join_button" id="btn_join_{{ challenge.id }}">Join Quest</button>
-                {% else %}
-                <button class="pixel-button start_button" id="btn_start_{{ challenge.id }}">Embark on Quest</button>
-                {% endif %}
-            </div>
         </div>
         {% endfor %}
-        </div>
+    </div>
+    {% if user and user.is_admin %}
+    <button class="btn btn-sm btn-danger" onclick="kickAll('{{ challenge.id }}')">
+        <i class="fas fa-user-slash me-2"></i>Kick All Players
+    </button>
+    {% endif %}
+    {% endif %}
 
-        <!-- Pagination Controls -->
-        <nav aria-label="Quest navigation" class="pixel-pagination">
-            {% if page > 1 %}
-            <a href="/?page={{ page - 1 }}" aria-label="Previous">&lt;&lt;</a>
-            {% endif %}
-            
-            {% for p in range(1, total_pages + 1) %}
-            <a href="/?page={{ p }}" {% if p == page %}class="active"{% endif %}>{{ p }}</a>
-            {% endfor %}
-            
-            {% if page < total_pages %}
-            <a href="/?page={{ page + 1 }}" aria-label="Next">&gt;&gt;</a>
-            {% endif %}
-        </nav>
+    {% set joined_info = join | selectattr('id', 'equalto', challenge.id|int) | first %}
+    
+    <div class="challenge-actions">
+        {% if joined_info %}
+        <button class="btn btn-sm btn-success" disabled>
+            <i class="fas fa-check me-2"></i>Joined
+        </button>
+        <button class="btn btn-sm btn-primary leave_button" id="btn_leave_{{ challenge.id }}">
+            <i class="fas fa-sign-out-alt me-2"></i>Leave
+        </button>
+        <button class="btn btn-sm btn-primary connect_button" id="btn_connect_{{ challenge.id }}">
+            <i class="fas fa-plug me-2"></i>Connect
+        </button>
+        {% elif challenge.players|length > 0 %}
+        <button class="btn btn-sm btn-primary join_button" id="btn_join_{{ challenge.id }}">
+            <i class="fas fa-sign-in-alt me-2"></i>Join
+        </button>
         {% else %}
-        <p class="pixel-text">No quests available. The realm is at peace... for now.</p>
+        <button class="btn btn-sm btn-primary start_button" id="btn_start_{{ challenge.id }}">
+            <i class="fas fa-play me-2"></i>Start Instance
+        </button>
         {% endif %}
+    </div>
+
+    {% if user and user.is_admin and not joined_info %}
+    <div class="admin-section">
+        <button class="btn btn-sm btn-danger" onclick="deleteChallenge('{{ challenge.id }}')">
+            <i class="fas fa-trash me-2"></i>Delete
+        </button>
     </div>
     {% endif %}
 </div>
-<script src="/static/main.js"></script>
+{% endfor %}
+</div>
+
+<!-- Pagination -->
+{% if total_pages > 1 %}
+<nav class="pagination-container">
+    {% if page > 1 %}
+    <a href="/?page={{ page - 1 }}" class="pagination-btn">
+        <i class="fas fa-chevron-left me-2"></i>Previous
+    </a>
+    {% endif %}
+    
+    {% for p in range(1, total_pages + 1) %}
+    <a href="/?page={{ p }}" class="pagination-btn {% if p == page %}active{% endif %}">{{ p }}</a>
+    {% endfor %}
+    
+    {% if page < total_pages %}
+    <a href="/?page={{ page + 1 }}" class="pagination-btn">
+        Next<i class="fas fa-chevron-right ms-2"></i>
+    </a>
+    {% endif %}
+</nav>
+{% endif %}
+
+{% else %}
+<div class="welcome-card">
+    <div class="text-center py-5">
+        <i class="fas fa-inbox" style="font-size: 4rem; color: rgba(255, 255, 255, 0.3); margin-bottom: 1rem;"></i>
+        <h3>No Challenges Available</h3>
+        <p style="color: rgba(255, 255, 255, 0.6);">Check back later for new challenges!</p>
+    </div>
+</div>
+{% endif %}
+{% endif %}
+
 <script>
+// Search functionality
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('search-input');
-    const searchButton = document.getElementById('search-button');
-    const challengeGrid = document.getElementById('challenge-grid');
-    const challengeBoxes = challengeGrid.querySelectorAll('.challenge-box');
+    if (searchInput) {
+        const challengeGrid = document.getElementById('challenge-grid');
+        const challengeCards = challengeGrid.querySelectorAll('.challenge-card');
 
-    function filterChallenges() {
-        const searchTerm = searchInput.value.toLowerCase();
-        challengeBoxes.forEach(box => {
-            const title = box.querySelector('.pixel-title').textContent.toLowerCase();
-            if (title.includes(searchTerm)) {
-                box.style.display = '';
-            } else {
-                box.style.display = 'none';
-            }
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            challengeCards.forEach(card => {
+                const title = card.querySelector('.challenge-title').textContent.toLowerCase();
+                card.style.display = title.includes(searchTerm) ? '' : 'none';
+            });
         });
     }
-
-    searchButton.addEventListener('click', filterChallenges);
-    searchInput.addEventListener('keyup', function(event) {
-        if (event.key === 'Enter') {
-            filterChallenges();
-        }
-    });
-});
-{% if user and user.is_admin %}
-kickButtons = document.querySelectorAll('[id^="btn_kick_"]');
-kickButtons.forEach(button => {
-    button.addEventListener('click', function() {
-        const [_, n, challengeId, player] = button.id.split('_');
-        fetch(`/api/challenge/${challengeId}/kick?email=${player}`)
-            .then(response => {
-                if (response.ok) {
-                    window.location.reload();
-                } else {
-                    document.getElementById('alert-banner').classList.remove('d-none');
-                }
-            });
-    });
-});
-kickALlButtons = document.querySelectorAll('[id^="btn_kickall_"]');
-kickALlButtons.forEach(button => {
-    button.addEventListener('click', function() {
-        const [_, n, challengeId] = button.id.split('_');
-        fetch(`/api/challenge/${challengeId}/kick_all`)
-            .then(response => {
-                if (response.ok) {
-                    window.location.reload();
-                } else {
-                    document.getElementById('alert-banner').classList.remove('d-none');
-                }
-            });
-    });
 });
 
-deleteButtons = document.querySelectorAll('[id^="btn_delete_"]');
-deleteButtons.forEach(button => {
-    button.addEventListener('click', function() {
-        const [_, n, challengeId] = button.id.split('_');
-        
-        // Confirm deletion
-        if (confirm('Are you sure you want to delete this quest? This action cannot be undone!')) {
-            button.disabled = true;
-            button.innerHTML = 'Deleting...';
-            
-            const token = localStorage.getItem('authToken');
-            if (!token) {
-                alert('You are not authenticated. Please log in again.');
-                button.disabled = false;
-                button.innerHTML = 'Delete Quest';
-                return;
-            }
-            
-            fetch(`/api/challenge/${challengeId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.code === 200) {
-                    // Remove the challenge box from DOM
-                    button.closest('.challenge-box').remove();
-                    alert('Quest deleted successfully!');
-                } else {
-                    alert('Failed to delete quest: ' + data.status);
-                    button.disabled = false;
-                    button.innerHTML = 'Delete Quest';
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while deleting the quest');
-                button.disabled = false;
-                button.innerHTML = 'Delete Quest';
-            });
+// Alert functions
+function hideAlert() {
+    document.getElementById('alert-banner').classList.add('d-none');
+}
+
+function showAlert() {
+    const banner = document.getElementById('alert-banner');
+    banner.classList.remove('d-none');
+    setTimeout(() => banner.classList.add('d-none'), 5000);
+}
+
+// Admin functions
+function kickPlayer(challengeId, player) {
+    if (!confirm(`Kick ${player} from this challenge?`)) return;
+    
+    fetch(`/api/challenge/${challengeId}/kick?email=${player}`)
+        .then(response => {
+            if (response.ok) location.reload();
+            else showAlert();
+        });
+}
+
+function kickAll(challengeId) {
+    if (!confirm('Kick all players from this challenge?')) return;
+    
+    fetch(`/api/challenge/${challengeId}/kick_all`)
+        .then(response => {
+            if (response.ok) location.reload();
+            else showAlert();
+        });
+}
+
+function deleteChallenge(challengeId) {
+    if (!confirm('Are you sure you want to delete this challenge? This action cannot be undone!')) return;
+    
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        alert('You are not authenticated. Please log in again.');
+        return;
+    }
+    
+    fetch(`/api/challenge/${challengeId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.code === 200) {
+            location.reload();
+        } else {
+            showAlert();
         }
-    });
-});
-{% endif %}
+    })
+    .catch(() => showAlert());
+}
 </script>
 {% endblock %}

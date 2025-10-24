@@ -1,194 +1,293 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+{% block content %}
 <style>
-    :root {
-        --primary-color: #00ff00;
-        --secondary-color: #ff00ff;
-        --background-color: #000000;
-        --text-color: #ffffff;
-        --alert-color: #ff0000;
-    }
+.signin-container {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0;
+}
 
-    .pixel-container {
-        max-width: 600px;
-        margin: 40px auto;
-        padding: 20px;
-        background-color: rgba(0, 0, 0, 0.8);
-        border: 4px solid var(--primary-color);
-        box-shadow: 8px 8px 0px var(--secondary-color);
-    }
+.signin-card {
+    max-width: 480px;
+    width: 100%;
+    background: rgba(28, 28, 30, 0.9);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 3rem 2.5rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    animation: slideUp 0.6s ease-out;
+}
 
-    .pixel-title {
-        font-size: 32px;
-        color: var(--primary-color);
-        text-shadow: 2px 2px var(--secondary-color);
-        text-align: center;
-        margin-bottom: 30px;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-    }
+.signin-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
 
-    .pixel-form {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
+.signin-icon {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    box-shadow: 0 8px 24px rgba(0, 122, 255, 0.3);
+}
 
-    .pixel-input-group {
-        display: flex;
-        flex-direction: column;
-    }
+.signin-icon i {
+    font-size: 2rem;
+    color: white;
+}
 
-    .pixel-label {
-        font-size: 18px;
-        color: var(--text-color);
-        margin-bottom: 10px;
-    }
+.signin-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
 
-    .pixel-input {
-        background-color: var(--background-color);
-        border: 2px solid var(--primary-color);
-        color: var(--text-color);
-        padding: 10px;
-        font-family: "Press Start 2P", cursive;
-        font-size: 16px;
-    }
+.signin-subtitle {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.95rem;
+}
 
-    .pixel-button {
-        background-color: var(--primary-color);
-        color: var(--background-color);
-        border: none;
-        padding: 15px;
-        font-family: "Press Start 2P", cursive;
-        font-size: 18px;
-        text-transform: uppercase;
-        cursor: pointer;
-        transition: all 0.3s;
-        box-shadow: 3px 3px 0px var(--secondary-color);
-    }
+.form-group {
+    margin-bottom: 1.5rem;
+}
 
-    .pixel-button:hover {
-        background-color: var(--secondary-color);
-        box-shadow: 3px 3px 0px var(--primary-color);
-        transform: translate(-2px, -2px);
-    }
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95rem;
+}
 
-    .pixel-button:active {
-        transform: translate(2px, 2px);
-        box-shadow: 1px 1px 0px var(--primary-color);
-    }
+.form-control {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: white;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
 
-    .pixel-message {
-        margin-top: 20px;
-        padding: 15px;
-        border: 2px solid var(--primary-color);
-        background-color: var(--background-color);
-        color: var(--text-color);
-        font-size: 16px;
-        text-align: center;
-    }
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
 
-    .pixel-message.success {
-        border-color: var(--primary-color);
-        color: var(--primary-color);
-    }
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
 
-    .pixel-message.error {
-        border-color: var(--alert-color);
-        color: var(--alert-color);
-    }
+.btn-signin {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(0, 122, 255, 0.3);
+}
 
-    @keyframes blink {
-        0% {
-            opacity: 1;
-        }
-        50% {
-            opacity: 0.5;
-        }
-        100% {
-            opacity: 1;
-        }
-    }
+.btn-signin:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0, 122, 255, 0.4);
+}
 
-    .blink {
-        animation: blink 1s infinite;
+.btn-signin:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.message {
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    animation: slideUp 0.3s ease-out;
+}
+
+.message-success {
+    background: rgba(52, 199, 89, 0.1);
+    border: 1px solid rgba(52, 199, 89, 0.3);
+    color: var(--success);
+}
+
+.message-error {
+    background: rgba(255, 59, 48, 0.1);
+    border: 1px solid rgba(255, 59, 48, 0.3);
+    color: var(--accent);
+}
+
+.signin-footer {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.signin-footer p {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
     }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 576px) {
+    .signin-card {
+        padding: 2rem 1.5rem;
+    }
+}
 </style>
 
-<div class="pixel-container">
-    <h2 class="pixel-title">Sign In</h2>
-    <form id="signinForm" class="pixel-form">
-        <div class="pixel-input-group">
-            <label for="signinEmail" class="pixel-label">Email</label>
-            <input
-                type="email"
-                class="pixel-input"
-                id="signinEmail"
-                name="email"
-                required
-            />
+<div class="signin-container">
+    <div class="signin-card">
+        <div class="signin-header">
+            <div class="signin-icon">
+                <i class="fas fa-user-lock"></i>
+            </div>
+            <h1 class="signin-title">Welcome Back</h1>
+            <p class="signin-subtitle">Sign in to manage your instances</p>
         </div>
-        <div class="pixel-input-group">
-            <label for="signinPassword" class="pixel-label">Access Token</label>
-            <input
-                type="password"
-                class="pixel-input"
-                id="signinPassword"
-                name="password"
-                required
-            />
-        </div>
-        <button type="submit" class="pixel-button">Sign In</button>
-    </form>
 
-    <div id="message" class="pixel-message"></div>
+        <div id="message-container"></div>
+
+        <form id="signin-form">
+            <div class="form-group">
+                <label for="email" class="form-label">
+                    <i class="fas fa-envelope me-2"></i>Email Address
+                </label>
+                <input
+                    type="email"
+                    class="form-control"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    required
+                />
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">
+                    <i class="fas fa-key me-2"></i>Access Token
+                </label>
+                <input
+                    type="password"
+                    class="form-control"
+                    id="password"
+                    name="password"
+                    placeholder="Enter your access token"
+                    required
+                />
+            </div>
+
+            <button type="submit" class="btn-signin" id="submit-btn">
+                <i class="fas fa-sign-in-alt me-2"></i>Sign In
+            </button>
+        </form>
+
+        <div class="signin-footer">
+            <p>
+                <i class="fas fa-info-circle me-2"></i>
+                Need help? Get your access token from CTFd settings
+            </p>
+        </div>
+    </div>
 </div>
 
 <script>
-    document
-        .getElementById("signinForm")
-        .addEventListener("submit", async function (event) {
-            event.preventDefault();
-            const email = document.getElementById("signinEmail").value;
-            const password = document.getElementById("signinPassword").value;
-
-            try {
-                const response = await fetch("/api/auth/signin", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        email: email,
-                        password: password,
-                    }),
-                });
-
-                const result = await response.json();
-                const messageElement = document.getElementById("message");
-
-                if (response.status === 200) {
-                    messageElement.innerHTML = "Login successful!";
-                    messageElement.classList.add("success", "blink");
-                    // Store the JWT token
-                    localStorage.setItem('authToken', result.data.token);
-                    // Redirect to homepage after login
-                    setTimeout(() => {
-                        window.location.href = "/";
-                    }, 2000);
-                } else {
-                    messageElement.innerHTML =
-                        "Error: " +
-                        (result.message || "Unknown error occurred");
-                    messageElement.classList.add("error", "blink");
-                }
-            } catch (error) {
-                console.error("An error occurred:", error);
-                const messageElement = document.getElementById("message");
-                messageElement.innerHTML =
-                    "An unexpected error occurred. Please try again.";
-                messageElement.classList.add("error", "blink");
-            }
+document.getElementById('signin-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const submitBtn = document.getElementById('submit-btn');
+    const messageContainer = document.getElementById('message-container');
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    
+    // Disable button and show loading
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Signing in...';
+    
+    try {
+        const response = await fetch('/api/auth/signin', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
         });
+        
+        const data = await response.json();
+        
+        if (response.ok && data.code === 200) {
+            // Store token
+            if (data.data && data.data.token) {
+                localStorage.setItem('authToken', data.data.token);
+            }
+            
+            // Show success message
+            messageContainer.innerHTML = `
+                <div class="message message-success">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Sign in successful! Redirecting...</span>
+                </div>
+            `;
+            
+            // Redirect after short delay
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 1000);
+        } else {
+            throw new Error(data.status || 'Sign in failed');
+        }
+    } catch (error) {
+        // Show error message
+        messageContainer.innerHTML = `
+            <div class="message message-error">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>${error.message || 'Invalid email or access token'}</span>
+            </div>
+        `;
+        
+        // Re-enable button
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-sign-in-alt me-2"></i>Sign In';
+        
+        // Auto-hide error after 5 seconds
+        setTimeout(() => {
+            messageContainer.innerHTML = '';
+        }, 5000);
+    }
+});
 </script>
-
 {% endblock %}
