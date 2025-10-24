@@ -24,8 +24,8 @@ config = {
         "USERNAME": os.getenv("DOCKER_USERNAME", ""),
         "PASSWORD": os.getenv("DOCKER_PASSWORD", ""),
         "REGISTRY": os.getenv("DOCKER_REGISTRY", "ghcr.io"),
-        "MIN_PORT": os.getenv("DOCKER_MIN_PORT", 51801),
-        "MAX_PORT": os.getenv("DOCKER_MAX_PORT", 51901),
+        "MIN_PORT": os.getenv("DOCKER_MIN_PORT", 51000),
+        "MAX_PORT": os.getenv("DOCKER_MAX_PORT", 52000),
     },
     "DEBUG": os.getenv("DEBUG", False),
     "BOT_TOKEN": os.getenv("BOT_TOKEN", "i_am_a_bot"),
@@ -34,6 +34,6 @@ config = {
         "URL": os.getenv("CTFD_URL", "http://ctf.bkisc.com"),
     },
     "CHALLENGE_HOST": {
-        "HOST": os.getenv("CHALLENGE_HOST", "192.168.1.38"),
+        "HOST": os.getenv("CHALLENGE_HOST", "instance-ctf.bkisc.com"),
     },
 }

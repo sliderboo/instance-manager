@@ -174,6 +174,10 @@ class ChallengeRepository:
             # Delete the challenge (cascade will handle related services and joins)
             self._session.delete(challenge)
             self._session.commit()
+            # Reset sequence if no challenges left
+            if self.count() == 0:
+                self._session.execute(text("ALTER SEQUENCE challenges_id_seq RESTART WITH 1;"))
+                self._session.commit()
             return True
         except Exception as e:
             log.debug(f"Error deleting challenge: {e}")
