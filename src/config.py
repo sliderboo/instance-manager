@@ -31,7 +31,7 @@ config = {
     "BOT_TOKEN": os.getenv("BOT_TOKEN", "i_am_a_bot"),
     "CTF_PLATFORM": os.getenv("CTF_PLATFORM", "ctfd"),
     "CTFD": {
-        "URL": os.getenv("CTFD_URL", "http://ctf.bkisc.com"),
+        "URL": os.getenv("CTFD_URL", "https://ctf.bkisc.com"),
     },
     "CHALLENGE_HOST": {
         "HOST": os.getenv("CHALLENGE_HOST", "instance-ctf.bkisc.com"),

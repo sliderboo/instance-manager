@@ -123,23 +123,45 @@ class AuthService:
             thirdPartyService = Service()
             user_data = thirdPartyService.fetch_user_info(user.email, user.password)
             if not user_data:
-                raise Exception("Failed to fetch user data")
+                raise Exception("Failed to fetch user data from CTFd")
+            
+            print(f"DEBUG: CTFd user data: email={user_data['email']}, name={user_data['name']}")
+            
             exist_user = self._repo.find_one(
                 query=QueryUserModel(email=user_data["email"])
             )
+            
             if not exist_user:
-                exist_user = UserModel(
+                print(f"DEBUG: User not found in database, creating new user")
+                new_user = UserModel(
+                    id=str(uuid4()),
                     email=user_data["email"],
                     display_name=normalize(user_data["name"]),
+                    is_admin=False,
                 )
-                exist_user = self._repo.create(exist_user)
+                exist_user = self._repo.create(new_user)
+                
+                if not exist_user:
+                    # Try to find if user with same display name exists
+                    name_conflict = self._repo.find_one(
+                        query=QueryUserModel(display_name=normalize(user_data["name"]))
+                    )
+                    if name_conflict:
+                        raise Exception(f"Display name '{normalize(user_data['name'])}' already exists. Please contact admin.")
+                    raise Exception("Failed to create user in database. Unknown error.")
+                
+                print(f"DEBUG: User created successfully with ID: {exist_user.id}")
+            else:
+                print(f"DEBUG: Found existing user with ID: {exist_user.id}")
 
             token = self._jwt.create({"uid": exist_user.id})
             if token is None:
                 raise Exception("Failed to create token")
+            
+            print(f"DEBUG: Successfully created token for user {exist_user.email}")
             return token
         except Exception as e:
-            print("Error when sign in: ", e)
+            print(f"Error when sign in: {e}")
             raise HTTPException(status_code=204, detail=str(e))
 
     def logout(self, uid: str) -> None:
